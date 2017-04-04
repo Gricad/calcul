@@ -20,8 +20,8 @@ This post is about publishing a new article into this blog.
 [jekyll]: https://jekyllrb.com/
 [github-pages]: https://pages.github.com/
 [gricad-org]: https://github.com/Gricad
-[bzizou]: https://github.com/orgs/Gricad/people/bzizou
-[alpitux]: https://github.com/orgs/Gricad/people/alpitux
-[ltavard]: https://github.com/orgs/Gricad/people/ltavard
+[bzizou]: https://github.com/bzizou
+[alpitux]: https://github.com/alpitux
+[ltavard]: https://github.com/ltavard
 [testing_localy]: https://help.github.com/articles/setting-up-your-github-pages-site-locally-with-jekyll
 [testing_localy_nix]: https://gricad.github.io/calcul/jekyll/nix/2017/04/04/setting-up-github-pages-site-locally-with-jekyll-under-nix.html
