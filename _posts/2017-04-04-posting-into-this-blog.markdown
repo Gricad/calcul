@@ -2,7 +2,7 @@
 layout: post
 title:  "Posting into this blog"
 date:   2017-04-04 12:24:00 +0200
-author: Bruno Bzeznik
+author: bzizou
 categories: jekyll
 ---
 

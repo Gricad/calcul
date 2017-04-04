@@ -2,7 +2,7 @@
 layout: post
 title:  "Setting up your GitHub Pages site locally with Jekyll under NIX"
 date:   2017-04-04 10:42:00 +0200
-author: Bruno Bzeznik
+author: bzizou
 categories: jekyll nix
 ---
 
