@@ -9,9 +9,7 @@
 title: Blog of the HPC team of GRICAD
 email: gricad-contact@univ-grenoble-alpes.fr
 description: > # this means to ignore newlines until "baseurl:"
-  The "pole calcul" (HPC team) of GRICAD maintains High Performance Computing
-  clusters for the University of Grenoble. This blog is to share some of
-  our technical stuff about Unix administration in our particular context.
+  Sharing technical stuff about system and network administration of High Performance Computing facilities.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://gricad-calcul.github.io/" # the base hostname & protocol for your site
 github_username:  gricad
@@ -19,4 +17,4 @@ github_username:  gricad
 # Build settings
 markdown: kramdown
 
-theme: jekyll-theme-time-machine
+theme: jekyll-theme-modernist
