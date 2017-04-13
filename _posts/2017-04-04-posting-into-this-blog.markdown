@@ -17,6 +17,15 @@ This post is about publishing a new article into this blog.
 * Commit your changes and push into the master branch to get your post published.
 * It's better to test and check before commiting, so, [follow this help page][testing_localy] or [this post][testing_localy_nix] if you are using Nix.
 
+Shortly:
+  * Install ruby if not already installed
+  * `gem install bundler`
+  * `cd <repository_of_the_blog>`
+  * `bundle install`
+  * `bundle exec jekyll serve` 
+* You can create drafts into `_drafts` and watch the drafts with:
+`bundle exec jekyll serve --draft`
+
 [jekyll]: https://jekyllrb.com/
 [github-pages]: https://pages.github.com/
 [gricad-org]: https://github.com/Gricad
