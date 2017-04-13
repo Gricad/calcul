@@ -17,7 +17,7 @@ This post is about publishing a new article into this blog.
 * Commit your changes and push into the master branch to get your post published.
 * It's better to test and check before commiting, so, [follow this help page][testing_localy] or [this post][testing_localy_nix] if you are using Nix.
 
-Shortly:
+Shortly, for testing:
   * Install ruby if not already installed
   * `gem install bundler`
   * `cd <repository_of_the_blog>`
