@@ -1,6 +1,7 @@
 * Notes pour la création d'un tuto nix aux JDEV
 
-** Format : 3h, le mardi matin, une intro suivi du tuto. support tuto en anglais
+** Format :
+3h, le mardi matin, une intro suivi du tuto.
 
 ** Public visé et objectifs?
 deux cas : 
@@ -9,5 +10,16 @@ deux cas :
 
 ** Déroulement de la séance
 
+*** Trouver un fil rouge pour illustrer le pb: un petit pgm avec de la fft et/ou du boost?
+**** quel est le problème?
+**** comment le résoudre (targz, nix et autres outils équivalents)
+**** pourquoi nix est une bonne solution
 
-** 
+*** Intro générale : Bruno reprend ses slides et on fait le point plus tard
+*** Tuto part 1 : pour les utilisateurs
+**** installation sur leur machine
+**** utilisation standard : les profils, installation/desinst d'un package
+**** cas tordus (R, python, OpenCL, GPU driver …)
+*** Tuto part 2 : utilisation avancé : création d'un paquet nix
+
+*** Tuto part 3 : installation sur un serveur de calcul (nix channel, dépôt github etc .)
