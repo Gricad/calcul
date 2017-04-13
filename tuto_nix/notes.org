@@ -1,7 +1,7 @@
 * Notes pour la création d'un tuto nix aux JDEV
 
 ** Format :
-3h, le mardi matin, une intro suivi du tuto.
+3h, le mardi matin, une intro suivi du tuto. Tuto en anglais.
 
 ** Public visé et objectifs?
 deux cas : 
