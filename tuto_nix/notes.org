@@ -16,6 +16,7 @@ deux cas :
 **** pourquoi nix est une bonne solution
 
 *** Intro générale : Bruno reprend ses slides et on fait le point plus tard
+slides : https://ciment.ujf-grenoble.fr/wiki-pub/images/f/f7/NIX_BUX_2016.pdf
 *** Tuto part 1 : pour les utilisateurs
 **** installation sur leur machine
 **** utilisation standard : les profils, installation/desinst d'un package
