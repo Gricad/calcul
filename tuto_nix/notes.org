@@ -24,3 +24,8 @@ slides : https://ciment.ujf-grenoble.fr/wiki-pub/images/f/f7/NIX_BUX_2016.pdf
 *** Tuto part 2 : utilisation avancé : création d'un paquet nix
 
 *** Tuto part 3 : installation sur un serveur de calcul (nix channel, dépôt github etc .)
+
+
+* Le poster?
+** voir version Philippe
+** trouver exemple 'passage à l'échelle du mésocentre au centre national'
