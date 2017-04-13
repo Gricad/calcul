@@ -1,0 +1,13 @@
+* Notes pour la création d'un tuto nix aux JDEV
+
+** Format : 3h, le mardi matin, une intro suivi du tuto.
+
+** Public visé et objectifs?
+deux cas : 
+- utilisateurs 'de base' : faire qu'ils repartent avec une installe de nix fonctionnelle ET la conviction que c'est utile
+- administrateurs : montrer comment mettre en place nix sur un cluster de calcul
+
+** Déroulement de la séance
+
+
+** 
