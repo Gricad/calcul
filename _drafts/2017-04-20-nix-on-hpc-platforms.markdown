@@ -95,6 +95,14 @@ Finally, initiate the configuration file and the store:
 ## The multi-users profile script
 TBC...
 
+## Starting the daemon
+
+## Testing
+
+## Setting up other head nodes for nix-daemon access through *socat*
+
+## Setting up a local Nix channel
+
 [nix]: https://nixos.org/nix/ 
 [sandervanderburg]: http://sandervanderburg.blogspot.fr/2013/06/setting-up-multi-user-nix-installation.html
 [getting_nix]: https://nixos.org/nix/download.html
