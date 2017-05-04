@@ -326,19 +326,50 @@ The test directory is not persistent :
 
 <em>-r--r--r-- 1 tuto tuto 18477350 janv.  1  1970 libHYPRE.a</em>
 
-Test building shared libraries :
+Test building shared libraries with openblas and liblapack :
 
 `./configure --enable-shared --prefix=$out && make && make install && make test`
 
-In progress ...
+`$ cat pkgs/development/libraries/hypre/builder.sh`
+```
+  source $stdenv/setup
+  tar -zxvf $src
+  cd $name/src
+  ./configure --prefix=$out --enable-shared --enable-fortran CXX=mpicxx --with-MPI --with-MPI-include='${openmpi}/include' --with-MPI-lib-dirs='${openmpi}/lib' --with-MPI-libs='mpi' --with-blas-lib-dirs='${openblas}/lib' --with-blas-libs='openblas' --with-lapack-lib='-llapack'
+  make 
+  make install
+  make test
+```
 
+`$ cat pkgs/development/libraries/hypre/default.nix`
+```
+{ stdenv, fetchurl, gfortran, openmpi, openblas, liblapack }:
 
-`$ nix-env -qa | grep mpich`
+stdenv.mkDerivation rec {
+  version = "2.11.2";
+  name = "hypre-${version}";
 
-mpich2-1.4
+  src = fetchurl {
+    url = "https://computation.llnl.gov/projects/hypre-scalable-linear-solvers-multigrid-methods/download/${name}.tar.gz";
+    sha256 = "17i6zgywcmgbmr7zxgc7shzqramg64a8kwswpdqkyn8ichic3di5";
+  };
 
-Test with liblapack:
+  builder = ./builder.sh;
 
+  buildInputs = [ gfortran openmpi openblas liblapack ];
 
+  doCheck = true;
+
+  enableParallelBuilding = true;
+
+  meta = {
+    description = "HYPRE: Scalable Linear Solvers and Multigrid Methods";
+    homepage = http://https://computation.llnl.gov/projects/hypre-scalable-linear-solvers-multigrid-methods;
+    license = stdenv.lib.licenses.gpl2Plus;
+    maintainers = [ stdenv.lib.maintainers.tuto ];
+    platforms = stdenv.lib.platforms.all;
+  };
+}
+```
 
 
