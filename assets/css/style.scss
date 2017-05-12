@@ -1,0 +1,126 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+.wrapper { max-width: 1024px; margin-right: auto; margin-left: auto; padding-right: 0; padding-left: 0; }
+@media screen and (max-width: 800px) {
+  .wrapper { padding-right: 0; padding-left: 0; width: 100%; min-width: 320px; border-radius: 0;}
+  footer {width: 100%;}
+  body {  padding-bottom: 5em; padding-top: 0;}
+}
+@media screen and (min-width: 800px) {
+  body {  padding-bottom: 8em; padding-top: 4em;}
+  .wrapper {width: 800px;}
+  footer {width: 800px;}
+}
+* {-moz-box-sizing: border-box; box-sizing: border-box;}
+html {
+  // background-color: rgba(190,230,250,.1);
+  background: url('../images/froggy2.jpg') repeat grey;
+  height: 100%;
+}
+body {
+  min-height: 100%;
+  margin: 0;
+  //padding: 0;
+  position: relative;
+}
+footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(106,191,207,1);
+  padding: 1em;
+}
+footer p {
+  color: white;
+}
+div.wrapper {
+  //box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 0, 0, 0.45) 0 3px 10px, rgba(255, 255, 255, 0.6) 0 0 30px 40px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 0, 0, 0.45) 0 3px 10px;
+}
+div.wrapper section {
+  background-color: rgba(255,255,255,.7);
+}
+header {
+  background: white;
+}
+h1, header h1 {
+  color: rgba(11,45,74,1);
+}
+body header ul li {
+  display: inline-block;
+  height: 2em;
+}
+body header ul {
+  height: 2em;
+}
+body>header {
+  width: 800px;
+}
+div.logo {
+  display: inline-block;
+  height: 8em;
+  width: 8em;
+  margin: 0 1em 0 0;
+}
+div.entete {
+  display: inline-block;
+  vertical-align: bottom;
+  padding-bottom: .5em;
+}
+header ul.menu {
+  position: absolute;
+  display: block;
+  right: 2em;
+  top: -1px;
+  border-radius: 0 0 5px 5px;
+  background-color: rgba(106,191,207,.4);
+}
+header ul.menu::before {
+  display: none;
+}
+header ul.menu li {
+  border-right: none;
+}
+header ul.menu li a {
+  text-shadow: rgba(16,47,76, .6) .13em 0 1px;
+}
+header ul.menu li:hover {
+  background-color: rgba(106,191,207,.6);
+}
+header.post-header {
+  background-color: rgba(200,200,200,.3);
+  border-radius: 0;
+  border-bottom: 2px solid rgba(100,100,100,.4);
+  position: absolute;
+  top:0;
+  left:0;
+  right:0;
+}
+article.post {
+  margin-top: 7em;
+}
+// SOMMAIRE
+ul.post-list {
+  list-style: inside none none;
+}
+ul.post-list li {
+  border-left: .4em solid rgba(106,191,207,.4);
+  padding-left: .6em;
+  margin: 1em 0 0 -1em;
+  background-color: rgba(255,255,255,.7);
+  padding: .5em;
+}
+ul.post-list li:hover {
+  background-color:rgba(255,255,255,.3);
+}
+h1.page-heading {
+  color: rgba(212,38,47,.9);
+}
+span.post-meta {
+  color: rgba(66,66,66,.6);
+}
+h2, h2 a { color: rgba(11,45,74,1); }

@@ -55,10 +55,10 @@ sudo rm -rf /nix
 rm -rf ~/.nix-profile
 {% endhighlight %}
 
-# Using Nix
+# Using Nix basics
 ## Activate your Nix environment
 
-To use your new Nix environment, you have to activate it typing :
+To use your new Nix environment, you have to enable it typing :
 {% highlight bash %}
 source ~/.nix-profile/etc/profile.d/nix.sh
 {% endhighlight %}
@@ -98,3 +98,6 @@ The following command will update the named package and all its dependencies :
 {% highlight bash %}
 nix-env -uA the_package_you-re_searching_for
 {% endhighlight %}
+
+# Nix easier with Nox
+We recommend to use Nox
