@@ -17,7 +17,7 @@
   <body>
     <div class="wrapper">
       <header {% unless site.description or site.github.project_tagline %} class="without-description" {% endunless %}>
-        <div class="logo"><a href="http://gricad.univ-grenoble-alpes.fr" title="Gricad"><img src="/gricad_logo.png"></a></div>
+        <div class="logo"><a href="http://gricad.univ-grenoble-alpes.fr" title="Gricad"><img src="{{ '/assets/images/logo_gricad.svg' | relative_url }}"></a></div>
         <div class="entete"><h1>{{ site.title | default: site.github.repository_name }}</h1>
         {% if site.description or site.github.project_tagline %}
           <p>{{ site.description | default: site.github.project_tagline }}</p>
