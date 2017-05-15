@@ -30,8 +30,10 @@ fi
 
 if ! test -d $HOME/.nixpkgs; then                              
     echo "creating $HOME/.nixpkgs" >&2                         
-    mkdir -p $HOME/.nixpkgs                                    
-    echo -e "{\n  allowUnfree = true; \n}"  > $HOME/.nixpkgs/config.nix 
+    mkdir -p $HOME/.nixpkgs
+    touch $HOME/.nixpkgs/config.nix
+    # uncomment if you want to allow non-free packages by default:
+    #echo -e "{\n  allowUnfree = true; \n}"  > $HOME/.nixpkgs/config.nix 
 fi
 
 export NIX_PROFILES="/nix/var/nix/profiles/default $HOME/.nix-profile"

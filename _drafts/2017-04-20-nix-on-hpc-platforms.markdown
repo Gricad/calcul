@@ -95,12 +95,96 @@ Finally, initiate the configuration file and the store:
 ## The multi-users profile script
 To use NIX, your users will have to source a shell script into their environment. Here is a simple [nix-multiuser.sh][nix-multiuser.sh] based on the one we are currently using. You might have to add/customize some environement variables.
 
-## Starting the daemon
-TBC...
+Basically, this scripts:
+ - sets the PATH to nix tools binaries
+ - sets the NIX_PATH variable, that may be necessary for some advanced operations and the use of a custom channel. We'll see this later...
+ - initializes per-user directories and configuration files
+ - sets the NIX_REMOTE variable that is necessary to use the NIX daemon 
+
+Put this file in a convenient place for your users, into a shared directory that is visible from all of your computing nodes and head nodes. For us, it is ``/applis/site/nix.sh``. 
+
+Our users are told to do this, in order to load NIX:
+
+{% highlight bash %}
+  source /applis/site/nix.sh
+{% endhighlight %}
+
+## Starting the NIX daemon
+The daemon must be started as root, after loading the Nix environment multiuser script:
+{% highlight bash %}
+  luke:~# source /applis/site/nix.sh
+  luke:~# nohup nix-daemon&
+{% endhighlight %}
+
+Of course, you'll have to place this into a startup-script in a convenient place for your distribution.
+
 
 ## Testing
+Now, you should be able to use Nix as a simple user from the head node running the daemon. Let's do some basic operations:
+{% highlight bash %}
+  bzizou@luke:~$ source /applis/site/nix.sh
+  bzizou@luke:~$ nix-env -q aalib
+  aalib-1.4rc5
+  installing ‘aalib-1.4rc5’
+  download-from-binary-cache.pl: still waiting for ‘https://cache.nixos.org/klbqigpkmfss2bag72dfgwgxrraybyc1.narinfo’ after 5 seconds...
+  these paths will be fetched (0.11 MiB download, 0.36 MiB unpacked):
+    /nix/store/2sgwjml2slrxmzc3n2dz59903dx73cg3-aalib-1.4rc5-doc
+    /nix/store/3xfhfx3172g1yrwi3f4i6bpv5xiishch-aalib-1.4rc5-dev
+    /nix/store/cb0ajb1njd0lx7yfzslqcz0gnl0xwyks-aalib-1.4rc5-bin
+    /nix/store/klbqigpkmfss2bag72dfgwgxrraybyc1-aalib-1.4rc5
+  fetching path ‘/nix/store/2sgwjml2slrxmzc3n2dz59903dx73cg3-aalib-1.4rc5-doc’...
+  
+  *** Downloading ‘https://cache.nixos.org/nar/06i5r8w2c86w3bb27kajpkfr82d0jh60iqzhx1cdrgpim1l2wilk.nar.xz’ to ‘/nix/store/2sgwjml2slrxmzc3n2dz59903dx73cg3-aalib-1.4rc5-doc’...
+    % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                   Dload  Upload   Total   Spent    Left  Speed
+  100 67900  100 67900    0     0  29073      0  0:00:02  0:00:02 --:--:-- 29066
+  
+  fetching path ‘/nix/store/klbqigpkmfss2bag72dfgwgxrraybyc1-aalib-1.4rc5’...
+  
+  *** Downloading ‘https://cache.nixos.org/nar/1qvyszrby2y8dmvzf1qjbvm247kqgwryc9fxfxmx6f5x4cjj73yg.nar.xz’ to ‘/nix/store/klbqigpkmfss2bag72dfgwgxrraybyc1-aalib-1.4rc5’...
+    % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                   Dload  Upload   Total   Spent    Left  Speed
+  100 31556  100 31556    0     0  14013      0  0:00:02  0:00:02 --:--:-- 14018
+  
+  fetching path ‘/nix/store/cb0ajb1njd0lx7yfzslqcz0gnl0xwyks-aalib-1.4rc5-bin’...
+  
+  *** Downloading ‘https://cache.nixos.org/nar/1wr6xbflv433xkzqkzb69yiz58aslbqwwzmhvhpd4sw928vw75v1.nar.xz’ to ‘/nix/store/cb0ajb1njd0lx7yfzslqcz0gnl0xwyks-aalib-1.4rc5-bin’...
+    % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                   Dload  Upload   Total   Spent    Left  Speed
+  100  7724  100  7724    0     0   4240      0  0:00:01  0:00:01 --:--:--  4239
+  
+  fetching path ‘/nix/store/3xfhfx3172g1yrwi3f4i6bpv5xiishch-aalib-1.4rc5-dev’...
+  
+  *** Downloading ‘https://cache.nixos.org/nar/1j399cn5h498kvnyfc7h148rrp5afi9kvv26b393l2za4ww6883q.nar.xz’ to ‘/nix/store/3xfhfx3172g1yrwi3f4i6bpv5xiishch-aalib-1.4rc5-dev’...
+    % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                   Dload  Upload   Total   Spent    Left  Speed
+  100 10480  100 10480    0     0   3733      0  0:00:02  0:00:02 --:--:--  3732
+  
+  building path(s) ‘/nix/store/67bk6d6pc97x4i21pyd9rq1dj97jrrn1-user-environment’
+  created 1254 symlinks in user environment
+  bzizou@luke:~$ which aainfo
+  /home/bzizou/.nix-profile/bin/aainfo
+  bzizou@luke:~$ aainfo |grep version
+  AAlib version:1.4
+{% endhighlight %}
+
+The installed packages should also be useable from a computing node. Log on a node (probably using your batch scheduler) and do some tests:
+
+{% highlight bash %}
+  bzizou@luke45:~$ source /applis/site/nix.sh   
+  bzizou@luke45:~$ aainfo |grep version
+  AAlib version:1.4
+  bzizou@luke45:~$ which aainfo
+  /home/bzizou/.nix-profile/bin/aainfo
+{% endhighlight %}
 
 ## Setting up other head nodes for nix-daemon access through *socat*
+The NIX daemon only listen on a Unix socket. There's no TCP socket. So if you have several head nodes, or if you want packages manipulations (installations, compilations, removal,...) possible from the computing nodes, you can set-up a socat tunnel for example:
+
+  # On the same server that is running the nix-daemon:
+  nohup socat TCP-LISTEN:4325,bind=172.28.0.2,reuseaddr,fork,range=172.28.0.0/24 UNIX-CLIENT:/var/run/nix/socket &
+
+TBC...
 
 ## Setting up a local Nix channel
 
