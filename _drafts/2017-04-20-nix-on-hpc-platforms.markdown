@@ -31,7 +31,7 @@ So, for example, set-up a mount on an NFS filesystem on all of your nodes:
 
 ## Install NIX
 
-The second step is to install the Nix command line tool. Download the source tarball from the [Getting Nix page][getting_nix]. Don't follow the quick way with the install script, it's not suitable for a multi-users installation. 
+The second step is to install the Nix command line tools. Download the source tarball from the [Getting Nix page][getting_nix]. **Don't follow the quick way with the install script**, it's not suitable for a multi-users installation. 
 
 In our computing center, we use [environment modules][env_modules] and a software repository shared on all the nodes into the path ``/applis``. Even if it becomes obsolete if you use Nix, it's not incompatible, so we choose to install the nix tools the same way we install other modules. For example, here's how we did (of course, it will not be suitable for you, and you'll have to adapt to your software environment):
 
@@ -93,9 +93,10 @@ Finally, initiate the configuration file and the store:
 {% endhighlight %}
 
 ## The multi-users profile script
-TBC...
+To use NIX, your users will have to source a shell script into their environment. Here is a simple [nix-multiuser.sh][nix-multiuser.sh] based on the one we are currently using. You might have to add/customize some environement variables.
 
 ## Starting the daemon
+TBC...
 
 ## Testing
 
@@ -107,3 +108,4 @@ TBC...
 [sandervanderburg]: http://sandervanderburg.blogspot.fr/2013/06/setting-up-multi-user-nix-installation.html
 [getting_nix]: https://nixos.org/nix/download.html
 [env_modules]: http://modules.sourceforge.net/
+[nix-multiuser.sh]: https://github.com/Gricad/calcul/blob/master/nix/nix-mutiluser.sh
