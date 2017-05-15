@@ -26,7 +26,7 @@ One of the most important thing to set-up to allow users to use Nix efficiently 
 So, for example, set-up a mount on an NFS filesystem on all of your nodes:
 {% highlight bash %}
   # fstab entry for NIX
-  luke:/home/nix          /nix    nfs     defaults        0       0
+  head1:/home/nix          /nix    nfs     defaults        0       0
 {% endhighlight %}
 
 ## Install NIX
@@ -56,7 +56,7 @@ So, as a result, we have working nix tools binaries compiled into the path ``/ap
 Then, try a simple test:
 
 {% highlight bash %}
-  [bzizou@froggy1 ~]$ nix-env --version
+  [user@froggy1 ~]$ nix-env --version
   nix-env (Nix) 1.11.4
 {% endhighlight %}
 
@@ -112,18 +112,27 @@ Our users are told to do this, in order to load NIX:
 ## Starting the NIX daemon
 The daemon must be started as root, after loading the Nix environment multiuser script:
 {% highlight bash %}
-  luke:~# source /applis/site/nix.sh
-  luke:~# nohup nix-daemon&
+  head1:~# source /applis/site/nix.sh
+  head1:~# nohup nix-daemon&
 {% endhighlight %}
 
 Of course, you'll have to place this into a startup-script in a convenient place for your distribution.
 
 
 ## Testing
+As root, first, update the channel:
+{% highlight bash %}
+  root@head1:~# source /applis/site/nix.sh
+  root@head1:~# nix-channel --update
+  # You can test (but as root, the nix daemon is not used):
+  root@head1:~# nix-env -i hello
+{% endhighlight %}
+
+
 Now, you should be able to use Nix as a simple user from the head node running the daemon. Let's do some basic operations:
 {% highlight bash %}
-  bzizou@luke:~$ source /applis/site/nix.sh
-  bzizou@luke:~$ nix-env -q aalib
+  user@head1:~$ source /applis/site/nix.sh
+  user@head1:~$ nix-env -q aalib
   aalib-1.4rc5
   installing ‘aalib-1.4rc5’
   download-from-binary-cache.pl: still waiting for ‘https://cache.nixos.org/klbqigpkmfss2bag72dfgwgxrraybyc1.narinfo’ after 5 seconds...
@@ -162,20 +171,20 @@ Now, you should be able to use Nix as a simple user from the head node running t
   
   building path(s) ‘/nix/store/67bk6d6pc97x4i21pyd9rq1dj97jrrn1-user-environment’
   created 1254 symlinks in user environment
-  bzizou@luke:~$ which aainfo
-  /home/bzizou/.nix-profile/bin/aainfo
-  bzizou@luke:~$ aainfo |grep version
+  user@head1:~$ which aainfo
+  /home/user/.nix-profile/bin/aainfo
+  user@head1:~$ aainfo |grep version
   AAlib version:1.4
 {% endhighlight %}
 
 The installed packages should also be useable from a computing node. Log on a node (probably using your batch scheduler) and do some tests:
 
 {% highlight bash %}
-  bzizou@luke45:~$ source /applis/site/nix.sh   
-  bzizou@luke45:~$ aainfo |grep version
+  user@node45:~$ source /applis/site/nix.sh   
+  user@node45:~$ aainfo |grep version
   AAlib version:1.4
-  bzizou@luke45:~$ which aainfo
-  /home/bzizou/.nix-profile/bin/aainfo
+  user@node45:~$ which aainfo
+  /home/user/.nix-profile/bin/aainfo
 {% endhighlight %}
 
 ## Setting up other head nodes for nix-daemon access through *socat* (optional)
@@ -184,9 +193,9 @@ The NIX daemon only listen on a Unix socket. There's no TCP socket. So if you ha
 In order to do that, you need to make the socket directory point to a local directory (before starting the Nix daemon):
 
 {% highlight bash %}
-  [bzizou@head1 ~]$ sudo rmdir /nix/var/nix/daemon-socket
-  [bzizou@head1 ~]$ sudo ln -s /var/run/nix /nix/var/nix/daemon-socket
-  [bzizou@head2 ~]$ ls -ld /nix/var/nix/daemon-socket
+  [user@head1 ~]$ sudo rmdir /nix/var/nix/daemon-socket
+  [user@head1 ~]$ sudo ln -s /var/run/nix /nix/var/nix/daemon-socket
+  [user@head2 ~]$ ls -ld /nix/var/nix/daemon-socket
   lrwxrwxrwx 1 root root 12 Mar  2  2016 /nix/var/nix/daemon-socket -> /var/run/nix
 {% endhighlight %}
 
