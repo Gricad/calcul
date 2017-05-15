@@ -6,7 +6,9 @@
 export PATH=~/.local/bin:/applis/site/stow/gcc_4.8.2/nix_1.11.4/bin::$PATH
 export MANPATH=~/.nix-profile/share/man:~/.local/share/man:/applis/site/stow/gcc_4.8.2/nix_1.11.4/share/man:$MANPATH
 
-export NIX_PATH=nixpkgs=/nix/var/nix/profiles/per-user/root/channels/ciment-channel
+# If you have a custom channel:
+#export NIX_PATH=nixpkgs=/nix/var/nix/profiles/per-user/root/channels/my-custom-channel
+export NIX_PATH=nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixpkgs
 
 export ACLOCAL_PATH=$HOME/.nix-profile/share/aclocal:$ACLOCAL_PATH
 
