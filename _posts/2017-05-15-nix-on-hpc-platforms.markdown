@@ -210,11 +210,15 @@ Then, you can start the socat tunnel into /var/run/nix/socket. Nix will use /nix
 {% endhighlight %}
 
 ## Setting up a local Nix channel (optional)
+We wanted to be provide our users some non-official packages (for example packages that are not yet merged into the upstream nixpkgs repository). 
 
-TBC...
+A channel is no more than an http server providing a **binary-cache** directory and an archive file of the maintained nix-expressions.
+
+Feel free to check our [ciment-channel][ciment-channel] on Github. This channel wraps the nixpkgs respository (as a git submodule) into a **ciment** channel that may provide some custom packages.
 
 [nix]: https://nixos.org/nix/ 
 [sandervanderburg]: http://sandervanderburg.blogspot.fr/2013/06/setting-up-multi-user-nix-installation.html
 [getting_nix]: https://nixos.org/nix/download.html
 [env_modules]: http://modules.sourceforge.net/
 [nix-multiuser.sh]: https://github.com/Gricad/calcul/blob/master/nix/nix-multiuser.sh
+[ciment-channel]: https://github.com/Gricad/nix-ciment-channel
