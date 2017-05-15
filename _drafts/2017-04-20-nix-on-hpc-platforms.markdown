@@ -178,15 +178,31 @@ The installed packages should also be useable from a computing node. Log on a no
   /home/bzizou/.nix-profile/bin/aainfo
 {% endhighlight %}
 
-## Setting up other head nodes for nix-daemon access through *socat*
-The NIX daemon only listen on a Unix socket. There's no TCP socket. So if you have several head nodes, or if you want packages manipulations (installations, compilations, removal,...) possible from the computing nodes, you can set-up a socat tunnel for example:
+## Setting up other head nodes for nix-daemon access through *socat* (optional)
+The NIX daemon only listen on a Unix socket. There's no TCP socket. So if you have several head nodes, or if you want packages manipulations (installations, compilations, removal,...) possible from the computing nodes, you can set-up a socat TCP tunnel to make the Unix socket available through the network. 
 
-  # On the same server that is running the nix-daemon:
-  nohup socat TCP-LISTEN:4325,bind=172.28.0.2,reuseaddr,fork,range=172.28.0.0/24 UNIX-CLIENT:/var/run/nix/socket &
+In order to do that, you need to make the socket directory point to a local directory (before starting the Nix daemon):
+
+{% highlight bash %}
+  [bzizou@head1 ~]$ sudo rmdir /nix/var/nix/daemon-socket
+  [bzizou@head1 ~]$ sudo ln -s /var/run/nix /nix/var/nix/daemon-socket
+  [bzizou@head2 ~]$ ls -ld /nix/var/nix/daemon-socket
+  lrwxrwxrwx 1 root root 12 Mar  2  2016 /nix/var/nix/daemon-socket -> /var/run/nix
+{% endhighlight %}
+
+Then, you can start the socat tunnel into /var/run/nix/socket. Nix will use /nix/var/nix/daemon-socket/socket that points to the local socket:
+
+{% highlight bash %}
+  # On the same server that is running the nix-daemon (head1, ip=172.18.0.10):
+  nohup socat TCP-LISTEN:3324,bind=172.18.0.10,reuseaddr,fork,range=172.18.0.0/24 UNIX-CLIENT:/var/run/nix/socket &
+
+  # On the other head node:
+  nohup socat unix-listen:/var/run/nix/socket,mode=666,fork tcp-connect:head1:3324 &
+{% endhighlight %}
+
+## Setting up a local Nix channel (optional)
 
 TBC...
-
-## Setting up a local Nix channel
 
 [nix]: https://nixos.org/nix/ 
 [sandervanderburg]: http://sandervanderburg.blogspot.fr/2013/06/setting-up-multi-user-nix-installation.html
