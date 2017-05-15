@@ -108,4 +108,4 @@ TBC...
 [sandervanderburg]: http://sandervanderburg.blogspot.fr/2013/06/setting-up-multi-user-nix-installation.html
 [getting_nix]: https://nixos.org/nix/download.html
 [env_modules]: http://modules.sourceforge.net/
-[nix-multiuser.sh]: https://github.com/Gricad/calcul/blob/master/nix/nix-mutiluser.sh
+[nix-multiuser.sh]: https://github.com/Gricad/calcul/blob/master/nix/nix-multiuser.sh
