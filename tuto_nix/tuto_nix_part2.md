@@ -372,4 +372,107 @@ stdenv.mkDerivation rec {
 }
 ```
 
+##### Example og Siesta package enabling several versions of the package linked with different libraries ####
+
+Siesta web page : "http://departments.icmab.es/leem/siesta/"
+
+`$ cat pkgs/development/libraries/Siesta/default.nix`
+```
+{ stdenv, writeText, fetchurl,
+  gfortran,
+  mpiEnabled ? false,
+  openmpEnabled ? false,
+  openblasEnabled ? false,
+  lapackEnabled ? false,
+  openmpi,
+  openblas,
+  liblapack,
+}:
+
+stdenv.mkDerivation rec {
+  version = "4.1-b2";
+  name = "siesta-${version}";
+
+  src = fetchurl {
+    url =
+"https://launchpad.net/siesta/4.1/${version}/+download/siesta-${version}.tar.gz";
+
+    sha256 =
+"2b495ae1bef087547444615f1318492e89fa2c00a4303c59f612769b87e73cfc";
+  };
+
+  hardeningDisable = [ "format" ];
+
+  enableParallelBuilding = true;
+
+  buildInputs = [ gfortran ]
+   ++ (stdenv.lib.optionals mpiEnabled [ openmpi ])
+   ++ (stdenv.lib.optionals lapackEnabled [ liblapack ])
+   ++ (stdenv.lib.optionals openblasEnabled [ openblas ]);
+
+  builder = if mpiEnabled && openmpEnabled && openblasEnabled
+                   -mpi-openmp-openblas.sh
+            else
+            if mpiEnabled && openmpEnabled && !openblasEnabled
+                   then ./builder-mpi-openmp.sh
+            else
+            if mpiEnabled && !openmpEnabled && openblasEnabled &&
+lapackEnabled
+                   then ./builder-mpi-openblas.sh
+            else
+            if mpiEnabled && ! openmpEnabled && !openblasEnabled
+                   then ./builder-mpi.sh
+            else
+                   ./builder-serial.sh;
+
+  meta = {
+    description = "A first-principles materials simulation code using
+DFT";
+    longDescription = ''
+    SIESTA is both a method and its computer program implementation,
+to perform efficient electronic structure calculations and ab initio
+molecular dynamics simulations of molecules and solids.
+      '';
+    homepage = "http://departments.icmab.es/leem/siesta/";
+    license = stdenv.lib.licenses.gpl2;
+    platforms = stdenv.lib.platforms.linux;
+  };
+} 
+```
+
+The builder :
+```
+source $stdenv/setup
+tar xvfz $src;
+cd siesta-${version};
+cd Obj;
+../Src/obj_setup.sh;
+cp gfortran.make arch.make;
+sed -i -e "s/^CC = .*/CC=mpicc/" arch.make
+sed -i -e "s/^FC = .*/FC=mpif90/" arch.make
+sed -i -e "s/^LIBS = .*/LIBS = /" arch.make
+sed -i -e "s/^COMP_LIBS = .*/COMP_LIBS = /" arch.make
+sed -i '/FC=mpif90/a \
+MPI_INTERFACE = libmpi_f90.a \
+MPI_INCLUDE = . \
+FPPFLAGS += -DMPI' arch.make
+sed -i '/LIBS = .*/a \
+LIBS += -L${openblas}/lib -lopenblas -L${liblapack}/lib -llapack'
+arch.make
+echo "####################################"
+echo "USING MPI OPENBLAS SCALAPACK BUILDER"
+echo "####################################"
+cat arch.make
+make;
+mkdir -p $out/bin
+cp -v siesta $out/bin/siesta
+
+mkdir -p $out/lib
+cp -v lib* $out/lib/
+exit;
+
+```
+Package build :
+
+`$nix-build -A siestaMpiOpenBlas`
 
