@@ -2,7 +2,7 @@
 layout: post
 title:  "Nix tutorial"
 author: calcul-team
-categories: Nix
+categories: [Nix,Tuto]
 ---
 
 table of content
@@ -18,16 +18,16 @@ table of content
 * les bases : utilisation en boîte noire
 * utilisateur avancé : créer son paquet nix
 * administrateur : installation sur un serveur de calcul
-2. slides de Bruno à reprendre : https://ciment.ujf-grenoble.fr/wiki-pub/images/f/f7/NIX_BUX_2016.pdf 
+2. slides de Bruno à reprendre : https://ciment.ujf-grenoble.fr/wiki-pub/images/f/f7/NIX_BUX_2016.pdf
 Objectifs :
  * que fait nix, dans quelles circonstances est-ce utile?
 3. Rappel du contexte de ce tuto : retour d'expérience dans un contexte HPC
 
-# First step : how to install Nix package manager on your laptop ?
+# How to install Nix package manager :
 ## Install Nix (single user mode)
-sources : [nix manual](http://nixos.org/nix/manual/#chap-installation)
+**Source** : http://nixos.org/nix/manual/#chap-installation
 
-Prerequisites :
+### Prerequisites :
   - Linux (64bits) / Mac OS
   - Be a sudoer or have root access.
   - Bash, curl installed
@@ -83,21 +83,64 @@ rm -rf ~/.nix-profile
 # Using Nix basics
 ## Activate your Nix environment
 
-nix environment must be enable by running: 
+First you have to source the following script to use your new Nix environment :
+
 {% highlight bash %}
 source ~/.nix-profile/etc/profile.d/nix.sh
 {% endhighlight %}
 
-This creates a set of variables and configure the PATH variable to point to your nix profile.
-It could be safe to put this line into your .bashrc file, for next logins.
+This create a set of variables and configure the PATH variable to point to your default nix profile.
 
-{% highlight bash %}
-env | grep nix
-*NIX_PATH=nixpkgs=/home/your_login/.nix-defexpr/channels/nixpkgs*
-*PATH=/home/your_login/.nix-profile/bin:/home/your_login/.nix-profile/sbin:/usr/local/bin:/usr/bin:/bin:*
+You can check changes typing :
+
+{% highlight bash %}env | grep nix
+
+NIX_PATH=nixpkgs=/home/your_login/.nix-defexpr/channels/nixpkgs
+PATH=/home/your_login/.nix-profile/bin:/home/your_login/.nix-profile/sbin:/usr/local/bin:/usr/bin:/bin:
 {% endhighlight %}
 
-## Installing packages and create user environment.
+## Working with profiles, create user environment
+
+Nix packages manager uses "profiles" to helps users manage as many environments as needed.
+Users can switch between each profiles and each profile history levels.
+
+What is my current profile ?
+Nix automaticaly create your first "default" profile. It create a symbolic link pointing to **/nix/var/nix/profiles/default**.
+{% highlight bash %}ls -l ~/.nix-profile/
+lrwxr-xr-x  1 your_login  staff  29 15 nov  2016 .nix-profile -> /nix/var/nix/profiles/default
+{% endhighlight %}
+
+To create a new profile and switch to :
+{% highlight bash %}
+nix-env --switch-profile /nix/var/nix/profiles/tuto-jdev
+{% endhighlight %}
+
+With this command, Nix create the "tuto-jdev" profile if it doesn't exist, and switch to it.
+Again, you can check changes :
+{% highlight bash %}ls -l ~/.nix-profile/
+lrwxr-xr-x  1 your_login  staff  29 15 nov  2016 .nix-profile -> /nix/var/nix/profiles/tuto-jdev
+{% endhighlight %}
+
+You can now work with differents profiles and switch between them.
+
+You can undo a **nix-env** command with :
+{% highlight bash %}
+nix-env --rollback
+{% endhighlight %}
+
+To view the entire profile history (called "links generations") :
+{% highlight bash %}
+nix-env --list-generations
+{% endhighlight %}
+
+You can directly return to a specific generation with its Id :
+{% highlight bash %}
+nix-env --switch-generation 42
+{% endhighlight %}
+
+You can have as much profile as needed. That way, you can have many environments.
+
+## Installing packages
 
 At this point it's important to understand the underlying mechanisms of nix for libraries installation and management.
 Nix is made to allow different users to have different configurations and to switch between them but
@@ -108,7 +151,7 @@ between /nix and ~/.nix-profile.
 
 Moreover, thanks to profile, a single user can easyly switch between different configurations.
 
-It's time to create your first profile :
+Let's start using Nix with our new "tuto-jdev" profile. Make sure you're using the right profile :
 {% highlight bash %}
 nix-env --switch-profile $NIX_USER_PROFILE_DIR/tuto-jdev
 {% endhighlight%}
@@ -249,7 +292,7 @@ We are going to get a local copy of a the NixOS nikpkgs tree
 
 Then, go to nixpkgs directory :
 
-`$ cd nixpkgs`
+`cd nixpkgs`
 
 ## Second step : find a good location for your package ; place a nix expression for your package under it :
 If your package is a library, you will place it under :
@@ -260,7 +303,7 @@ pkgs/servers/monitoring
 
 Create a directory for your package :
 
-`$ mkdir pkgs/development/libraries/libfoo`
+`mkdir pkgs/development/libraries/libfoo`
 
 Then create the nix expression of your library package, it is usually called default.nix :
 
@@ -286,14 +329,14 @@ The code is available at "http://www.pdc.kth.se:8080/pdc/education/tutorials/mpi
 
 A good place for nix expression of the "oned" package, seems to be : `pkgs/application/science/physics`
 
-```
+{% highlight bash %}
 $ mkdir pkgs/applications/science/physics/oned
 $ emacs pkgs/applications/science/physics/oned/default.nix
-```
+{% endhighlight %}
 
 you can use nix-prefetch-url (or similar nix-prefetch-git) to get the SHA-256 hash of source distributions
 
-`$ nix-prefetch-url http://www.pdc.kth.se:8080/pdc/education/tutorials/mpi/hybrid-lab/oned.c/at_download/file`
+`nix-prefetch-url http://www.pdc.kth.se:8080/pdc/education/tutorials/mpi/hybrid-lab/oned.c/at_download/file`
 
 *1585yzy1gkg3bxfg19mh3ag1x7yik2h3lg5kz705d3jk9dhjg03b*
 
@@ -311,11 +354,11 @@ Ex:
 
 Add your maintainer name with your email, respecting the alphabetical order :
 
-`$ emacs ~/nixpkgs/lib/maintainers.nix`
+`emacs ~/nixpkgs/lib/maintainers.nix`
 
 Declare the package in the list of packages :
 
-`$ emacs ~/nixpkgs/pkgs/top-level/all-packages.nix`
+`emacs ~/nixpkgs/pkgs/top-level/all-packages.nix`
 
 Add the following line (in the SCIENCE zone, and respecting the alphabetical order) :
 
@@ -323,9 +366,9 @@ Add the following line (in the SCIENCE zone, and respecting the alphabetical ord
 
 A Derivation for oned :
 
-`$ cat  ~/nixpkgs/pkgs/applications/science/physics/oned/default.nix`
+`cat  ~/nixpkgs/pkgs/applications/science/physics/oned/default.nix`
 
-```
+{% highlight bash %}
 { stdenv, fetchgit, openmpi }:
 
 stdenv.mkDerivation {
@@ -347,32 +390,32 @@ stdenv.mkDerivation {
     platforms   = stdenv.lib.platforms.unix;
   };
 }
-```
+{% endhighlight %}
 
 Then we can build the Package :
 
-`$ nix-build -A oned`
+`nix-build -A oned`
 
 And check that all the dynamically loaded libraries are inside the /nix/store directory:
 
-`$ ldd /nix/store/9bf6yzn9s0lcppr6spl0c12nbrw36p71-oned/bin/oned.exe`
+`ldd /nix/store/9bf6yzn9s0lcppr6spl0c12nbrw36p71-oned/bin/oned.exe`
 
 Test the executable :
 
-`$ oned.exe`
+`oned.exe`
 
 *bash: oned.exe : command not found*
 
 *installing ‘oned’*
 
-`$ nix-env -f . -iA oned`
+`nix-env -f . -iA oned`
 
 <em>building path(s) ‘/nix/store/66rh542l3hnwscgvd39n784qamympv8p-user-environment’</em>
 
 <em>created 67 symlinks in user environment</em>
 
 
-`$ nix-env -i ./result`
+`nix-env -i ./result`
 
 <em>
 replacing old ‘oned’
@@ -384,13 +427,13 @@ building path(s) ‘/nix/store/q90hj0l7vxwc23g1h0vhr7b72k0rcicp-user-environment
 
 Now we can test the oned program:
 
-`$ oned.exe 200`
+`oned.exe 200`
 
 Then a MPI run :
 
-`$ nix-env -i openmpi`
+`nix-env -i openmpi`
 
-`$ mpirun -np 2 /nix/store/9bf6yzn9s0lcppr6spl0c12nbrw36p71-oned/bin/oned.exe 200`
+`mpirun -np 2 /nix/store/9bf6yzn9s0lcppr6spl0c12nbrw36p71-oned/bin/oned.exe 200`
 
 ### Example of hypre Package : Adding the hypre library package to nix ; creation of a derivation.  
 
@@ -398,7 +441,7 @@ hypre web page : https://computation.llnl.gov/projects/hypre-scalable-linear-sol
 
 Get the source distribution hash :
 
-`$ nix-prefetch-url https://computation.llnl.gov/projects/hypre-scalable-linear-solvers-multigrid-methods/download/hypre-2.11.2.tar.gz`
+`nix-prefetch-url https://computation.llnl.gov/projects/hypre-scalable-linear-solvers-multigrid-methods/download/hypre-2.11.2.tar.gz`
 
 <em>downloading ‘https://computation.llnl.gov/projects/hypre-scalable-linear-solvers-multigrid-methods/download/hypre-2.11.2.tar.gz’.. [6464/7888 KiB, 1207.1 KiB/s]</em>
 
@@ -416,7 +459,7 @@ A derivation to build hypre package :
 
 `$ cat pkgs/development/libraries/hypre/default.nix`
 
-```
+{% highlight bash %}
 { stdenv, fetchurl, gfortran, openmpi }:
 
 stdenv.mkDerivation rec {
@@ -449,9 +492,9 @@ stdenv.mkDerivation rec {
     platforms = stdenv.lib.platforms.all;
   };
 }
-```
+{% endhighlight %}
 
-`$ nix-build -A hypre` 		# We observe that ''make test'' operates under /tmp
+`nix-build -A hypre` 		# We observe that ''make test'' operates under /tmp
 
 <em>Making test drivers ...
 make[1]: Entering directory '/tmp/nix-build-hypre-2.11.2.drv-0/hypre-2.11.2/src/test'
@@ -469,11 +512,11 @@ make[1]: Leaving directory '/tmp/nix-build-hypre-2.11.2.drv-0/hypre-2.11.2/src/t
 
 The test directory is not persistent :
 
-`$ ls /tmp/nix-build-hypre-2.11.2.drv-0/hypre-2.11.2/src/test`
+`ls /tmp/nix-build-hypre-2.11.2.drv-0/hypre-2.11.2/src/test`
 
 <em>File not found:  '/tmp/nix-build-hypre-2.11.2.drv-0/hypre-2.11.2/src/test'</em>
 
-`$ ls -al /nix/store/cmr0hkvq40b29gy5ppsylksg0yk99ypc-hypre-2.11.2/lib/`
+`ls -al /nix/store/cmr0hkvq40b29gy5ppsylksg0yk99ypc-hypre-2.11.2/lib/`
 
 <em>-r--r--r-- 1 tuto tuto 18477350 janv.  1  1970 libHYPRE.a</em>
 
@@ -481,8 +524,8 @@ Test building shared libraries with openblas and liblapack :
 
 `./configure --enable-shared --prefix=$out && make && make install && make test`
 
-`$ cat pkgs/development/libraries/hypre/builder.sh`
-```
+`cat pkgs/development/libraries/hypre/builder.sh`
+{% highlight bash %}
   source $stdenv/setup
   tar -zxvf $src
   cd $name/src
@@ -490,10 +533,10 @@ Test building shared libraries with openblas and liblapack :
   make
   make install
   make test
-```
+{% endhighlight %}
 
-`$ cat pkgs/development/libraries/hypre/default.nix`
-```
+`cat pkgs/development/libraries/hypre/default.nix`
+{% highlight bash %}
 { stdenv, fetchurl, gfortran, openmpi, openblas, liblapack }:
 
 stdenv.mkDerivation rec {
@@ -521,7 +564,7 @@ stdenv.mkDerivation rec {
     platforms = stdenv.lib.platforms.all;
   };
 }
-```
+{% endhighlight %}
 
 
 Note : parler de l'option allowunfree.
@@ -540,13 +583,13 @@ in configuration.nix to override this.
 
 to ~/.config/nixpkgs/config.nix.
 
-`$ mkdir .config/nixpkgs`
+`mkdir .config/nixpkgs`
 
-`$ emacs .config/nixpkgs/config.nix`
+`emacs .config/nixpkgs/config.nix`
 
-`$ cat .config/nixpkgs/config.nix`
+`cat .config/nixpkgs/config.nix`
 
-```
+{% highlight bash %}
 {
 
 allowUnfree = true;
@@ -557,4 +600,4 @@ permittedInsecurePackages = [
   ];
 
 }
-```
+{% endhighlight %}
