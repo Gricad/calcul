@@ -71,8 +71,6 @@ The Nix package manager is now installed on your system and ready to be used.
 
 The installation process only populates the directory `/nix` and creates a symbolic link `~/.nix-profile` in your home directory.
 
-Donner des détails sur le contenu de ces répertoires ? Plus tard ?
-
 ## Uninstall Nix
 You can easily uninstall Nix from your system typing :
 {% highlight bash %}
@@ -112,11 +110,11 @@ lrwxr-xr-x  1 your_login  staff  29 15 nov  2016 .nix-profile -> /nix/var/nix/pr
 
 To create a new profile and switch to :
 {% highlight bash %}
-nix-env --switch-profile /nix/var/nix/profiles/tuto-jdev
+nix-env --switch-profile $NIX_USER_PROFILE_DIR/tuto-jdev
 {% endhighlight %}
 
 With this command, Nix create the "tuto-jdev" profile if it doesn't exist, and switch to it.
-Again, you can check changes :
+You can check changes :
 {% highlight bash %}ls -l ~/.nix-profile/
 lrwxr-xr-x  1 your_login  staff  29 15 nov  2016 .nix-profile -> /nix/var/nix/profiles/tuto-jdev
 {% endhighlight %}
@@ -191,7 +189,7 @@ Ok, now you're able to choose the fftw version that fits you. Notice
 on the right column, the complete name of the package and on the
 left column, the channel and component name.
 
-TODO : intro avec précision sur le vocabulaire (channel, package, attribut ...)
+**TODO : intro avec précision sur le vocabulaire (channel, package, attribut ...)**
 
 Once you've find the package name you want to install, you can do it with the following option :
 {% highlight bash %}
