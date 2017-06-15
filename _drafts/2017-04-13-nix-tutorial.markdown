@@ -24,13 +24,15 @@ Objectifs :
 3. Rappel du contexte de ce tuto : retour d'expérience dans un contexte HPC
 
 # How to install Nix package manager :
-## Install Nix (single user mode)
-**Source** : http://nixos.org/nix/manual/#chap-installation
 
-### Prerequisites :
+## Prerequisites :
   - Linux (64bits) / Mac OS
   - Be a sudoer or have root access.
   - Bash, curl installed
+  
+## Install Nix (single user mode)
+**Source** : http://nixos.org/nix/manual/#chap-installation
+
 
 From a basic environment you just have to run the following command :
 {% highlight bash %}
