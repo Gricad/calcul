@@ -29,7 +29,7 @@ Objectifs :
   - Linux (64bits) / Mac OS
   - Be a sudoer or have root access.
   - Bash, curl installed
-  
+
 ## Install Nix (single user mode)
 **Source** : http://nixos.org/nix/manual/#chap-installation
 
@@ -252,21 +252,21 @@ Next steps:
 * switch between profiles, rollback
 
 
-### Remove packages
+## Remove packages
 
 To remove a package from your Nix profile, just type :
 {% highlight bash %}
 nix-env -e the_package_you-re_searching_for
 {% endhighlight %}
 
-### Update packages
+## Update packages
 
 The following command will update the named package and all its dependencies :
 {% highlight bash %}
 nix-env -uA the_package_you-re_searching_for
 {% endhighlight %}
 
-### Nix easier with Nox
+## Nix easier with Nox
 We recommend to use Nox
 
 Nox facilite la recherche et l'installation de paquet car propose clairement les noms des paquets ainsi que leur attribut.
