@@ -9,7 +9,6 @@ table of content
 * TOC
 {:toc}
 
-
 # Introduction
 
 1. un mot sur le déroulement de la séance
@@ -112,7 +111,7 @@ lrwxr-xr-x  1 your_login  staff  29 15 nov  2016 .nix-profile -> /nix/var/nix/pr
 
 To create a new profile and switch to :
 {% highlight bash %}
-nix-env --switch-profile $NIX_USER_PROFILE_DIR/tuto-jdev
+nix-env --switch-profile /nix/var/nix/profiles/per-user/your_login/tuto-jdev
 {% endhighlight %}
 
 With this command, Nix create the "tuto-jdev" profile if it doesn't exist, and switch to it.
@@ -165,8 +164,7 @@ ls -altr ~/.nix-profile
 
 ### Install my first package with Nix
 Let us assume that you need some specific library, say for instance fftw.
-First of all, you need to check if this package is available, if so which is
-the version number and so on:
+First of all, you need to check if this package is available, if so which is the version number and so on:
 
 The complete list of all available packages can be obtained thanks to the command
 {% highlight bash %}
@@ -177,80 +175,55 @@ nix-env -qaP
 
 combined with grep to target a specific library:
 {% highlight bash %}
-nix-env -qaP |grep fft
-ciment-channel.fftw                                                      fftw-double-3.3.6-pl1
-ciment-channel.fftwLongDouble                                            fftw-long-double-3.3.6-pl1
-ciment-channel.fftwFloat                                                 fftw-single-3.3.6-pl1
-ciment-channel.python27Packages.pyfftw                                   python2.7-pyfftw-0.10.4
-ciment-channel.python35Packages.pyfftw                                   python3.5-pyfftw-0.10.4
+nix-env -qaP | grep fftw
+nixpkgs.fftw                                                   fftw-double-3.3.5
+nixpkgs.fftwLongDouble                                         fftw-long-double-3.3.5
+nixpkgs.fftwFloat                                              fftw-single-3.3.5
+nixpkgs.python27Packages.pyfftw                                python2.7-pyfftw-0.10.4
+nixpkgs.python35Packages.pyfftw                                python3.5-pyfftw-0.10.4
 {% endhighlight %}
 
 (qaP : q as query, a as available and P as preserve-installed)
 
 Ok, now you're able to choose the fftw version that fits you. Notice
 on the right column, the complete name of the package and on the
-left column, the channel and component name.
+left column, the attributes of the package (channel and components name between dots).
 
-**TODO : intro avec précision sur le vocabulaire (channel, package, attribut ...)**
-
-Once you've find the package name you want to install, you can do it with the following option :
+Once you've find the package name you want to install, you can do it with the following option (by name) :
 {% highlight bash %}
-nix-env -i fftw-double-3.3.6-pl1
+nix-env -i fftw-double-3.3.5
 {% endhighlight %}
 
-Let us install another package:
-
+Or (by attributes) :
 {% highlight bash %}
-nix-env -i gmsh-2.12.0
+nix-env -iA nixpkgs.fftw
 {% endhighlight %}
 
-As you noticed, the main command to manage packages with Nix is `nix-env`. You can list all installed packages in your current nix-profile with :
-
-{% highlight bash %}
-nix-env -q
-
-gmsh-2.12.0
-fftw-double-3.3.6-pl1
-{% endhighlight %}
-
-and check the consequences of these installations in ~/.nix-profile:
+Check the consequences of these installations in ~/.nix-profile:
 
 {% highlight bash %}
 ls -altr ~/.nix-profile/bin
 
-gmsh -> /nix/store/cbb4r17irfmzb0a37gc4z0zsrj9cj88b-gmsh-2.12.0/bin/gmsh
+.nix-profile/bin/fftw-wisdom -> /nix/store/fbfbah2swf6ib9x0vk816y2ymiw648bp-fftw-double-3.3.6-pl1-dev/bin/fftw-wisdom
 {% endhighlight %}
+
+Take a look at the dependencies :
 
 {% highlight bash %}
-ls -altr ~/.nix-profile/lib
-
-...
-libfftw3.so.3 -> /nix/store/95z1jzxvy0db7jikifvdxn7hz11kjq8x-fftw-double-3.3.6-pl1/lib/libfftw3.so.3*
-...
-{% endhighlight %}
-
-or
-{% highlight bash %}
-ldd ~/.nix-profile/
-
-	linux-vdso.so.1 (0x00007fff3b39c000)
-	libm.so.6 => /nix/store/68sa3m89shpfaqq1b9xp5p1360vqhwx6-glibc-2.25/lib/libm.so.6 (0x00007fc8a30aa000)
-	libc.so.6 => /nix/store/68sa3m89shpfaqq1b9xp5p1360vqhwx6-glibc-2.25/lib/libc.so.6 (0x00007fc8a2d0b000)
-	/nix/store/68sa3m89shpfaqq1b9xp5p1360vqhwx6-glibc-2.25/lib64/ld-linux-x86-64.so.2 (0x00007fc8a3745000)
+ldd .nix-profile/bin/fftw-wisdom
+	linux-vdso.so.1 (0x00007ffc02114000)
+	libfftw3_threads.so.3 => /nix/store/95z1jzxvy0db7jikifvdxn7hz11kjq8x-fftw-double-3.3.6-pl1/lib/libfftw3_threads.so.3 (0x00007f9521814000)
+	libfftw3.so.3 => /nix/store/95z1jzxvy0db7jikifvdxn7hz11kjq8x-fftw-double-3.3.6-pl1/lib/libfftw3.so.3 (0x00007f952148c000)
+	libm.so.6 => /nix/store/68sa3m89shpfaqq1b9xp5p1360vqhwx6-glibc-2.25/lib/libm.so.6 (0x00007f9521179000)
+	libpthread.so.0 => /nix/store/68sa3m89shpfaqq1b9xp5p1360vqhwx6-glibc-2.25/lib/libpthread.so.0 (0x00007f9520f5b000)
+	libc.so.6 => /nix/store/68sa3m89shpfaqq1b9xp5p1360vqhwx6-glibc-2.25/lib/libc.so.6 (0x00007f9520bbc000)
+	/nix/store/68sa3m89shpfaqq1b9xp5p1360vqhwx6-glibc-2.25/lib/ld-linux-x86-64.so.2 => /lib64/ld-linux-x86-64.so.2 (0x00007f9521a1b000)
 {% endhighlight %}
 
 
-*. libraries and binaries for fftw and gmsh are now available in your local (profile) environment
+* libraries and binaries for fftw are now available in your local (profile) environment
 * this environment (.nix-profile) contains only symbolic links
 * everything has been installed in /nix
-
-Next steps:
-
-* create a new profile, check .nix-profile
-* install a new version of fftw (single for instance)
-* uninstall/reinstall a package --> no installation just re-create links
-* switch between profiles, rollback
-
 
 ## Remove packages
 
