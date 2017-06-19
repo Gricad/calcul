@@ -253,13 +253,12 @@ nix-env -i nox
 
 Nox provide a command line interface to search and install packages.
 For instance, to install the fftw package with nox, you just have to type :
-{% highlight bash %}
+```
 nox fftw
-{% endhighlight %}
-
+```
 Nox lists the matching packages list. To install a specific version you just have to enter the number of the package in this list.
 
-![Nox search and install]({{ site.url }}/tuto_nix/images/nox_install.png)
+![Nox search and install]({{ site.url }}/tuto_nix/media/nox_install.png)
 
 
 
