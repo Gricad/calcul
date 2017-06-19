@@ -3,14 +3,14 @@ with pkgs;
 
 let
   inherit stdenv fetchurl perl;
-  appName = "hello-2.1.1y";
+  version = "2.1.1";
 in
 {
-  "${appName}" = stdenv.mkDerivation {
-    name = appName;
+    hello = stdenv.mkDerivation rec {
+    name = "hello-${version}";
     buildInputs = [ perl ];
     src = fetchurl {
-      url = ftp://ftp.nluug.nl/pub/gnu/hello/hello-2.1.1.tar.gz;
+      url = "ftp://ftp.nluug.nl/pub/gnu/hello/${name}.tar.gz";
       md5 = "70c9ccf9fac07f762c24f2df2290784d";
     };
   };
