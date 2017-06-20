@@ -517,7 +517,7 @@ lrwxrwxrwx. 1 rochf users 14 13 juin  19:13 /nix/var/nix/profiles/default -> def
 Let's note that ''default'' point to the current generation.
 
 This nice picture illustrates the generation mechanisms:
-![Profiles](/images/nix_arborescence.png)
+![Profiles]({{site_url}}/tuto_nix/media/nix_arborescence.png)
 
 
 ### Third step: Building and installing the Package
