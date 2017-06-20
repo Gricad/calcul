@@ -39,17 +39,17 @@ Objectifs :
 **Source** : http://nixos.org/nix/manual/#chap-installation
 
 From a basic environment you just have to run the following command :
-{% highlight bash %}
+```bash
 bash <(curl https://nixos.org/nix/install)
-{% endhighlight %}
+```
 **Note** : If you don't have sudo installed or if you're not a sudoer, you have to execute this command as root :
-{% highlight bash %}
+```bash
 mkdir -m 0755 /nix && chown your_login /nix
-{% endhighlight %}
+```
 
 From this point, you should see something like this :
 
-{% highlight bash %}
+```bash
 bash <(curl https://nixos.org/nix/install)
 [...]
 performing a single-user installation of Nix...
@@ -70,7 +70,7 @@ variables are set, either log in again, or type
   . /home/your_login/.nix-profile/etc/profile.d/nix.sh
 
 in your shell.
-{% endhighlight %}
+```
 
 
 The Nix package manager is now installed on your system and ready to be used.
@@ -79,28 +79,29 @@ The installation process only populates the directory `/nix` and creates a symbo
 
 ## Uninstall Nix
 You can easily uninstall Nix from your system typing :
-{% highlight bash %}
+```bash
 sudo rm -rf /nix
 rm -rf ~/.nix-profile
-{% endhighlight %}
+```
 
 ## Activate your Nix environments
 
 First you have to source the following script to use your new Nix environment :
 
-{% highlight bash %}
+```bash
 source ~/.nix-profile/etc/profile.d/nix.sh
-{% endhighlight %}
+```
 
 This create a set of variables and configure the PATH variable to point to your default nix profile.
 
 You can check changes typing :
 
-{% highlight bash %}env | grep nix
+```bash
+env | grep nix
 
 NIX_PATH=nixpkgs=/home/your_login/.nix-defexpr/channels/nixpkgs
 PATH=/home/your_login/.nix-profile/bin:/home/your_login/.nix-profile/sbin:/usr/local/bin:/usr/bin:/bin:
-{% endhighlight %}
+```
 
 ## Working with profiles, create user environment
 
@@ -109,37 +110,39 @@ Users can switch between each profiles and each profile history levels.
 
 What is my current profile ?
 Nix automaticaly create your first "default" profile. It create a symbolic link pointing to **/nix/var/nix/profiles/default**.
-{% highlight bash %}ls -l ~/.nix-profile/
+```bash
+ls -l ~/.nix-profile/
 lrwxr-xr-x  1 your_login  staff  29 15 nov  2016 .nix-profile -> /nix/var/nix/profiles/default
-{% endhighlight %}
+```
 
 To create a new profile and switch to :
-{% highlight bash %}
+```bash
 nix-env --switch-profile /nix/var/nix/profiles/per-user/your_login/tuto-jdev
-{% endhighlight %}
+```
 
 With this command, Nix create the "tuto-jdev" profile if it doesn't exist, and switch to it.
 You can check changes :
-{% highlight bash %}ls -l ~/.nix-profile/
+```bash
+ls -l ~/.nix-profile/
 lrwxr-xr-x  1 your_login  staff  29 15 nov  2016 .nix-profile -> /nix/var/nix/profiles/tuto-jdev
-{% endhighlight %}
+```
 
 You can now work with differents profiles and switch between them.
 
 You can undo a **nix-env** command with :
-{% highlight bash %}
+```bash
 nix-env --rollback
-{% endhighlight %}
+```
 
 To view the entire profile history (called "links generations") :
-{% highlight bash %}
+```bash
 nix-env --list-generations
-{% endhighlight %}
+```
 
 You can directly return to a specific generation with its Id :
-{% highlight bash %}
+```bash
 nix-env --switch-generation 42
-{% endhighlight %}
+```
 
 You can have as much profile as needed. That way, you can have many environments.
 
@@ -155,37 +158,37 @@ between /nix and ~/.nix-profile.
 Moreover, thanks to profile, a single user can easyly switch between different configurations.
 
 Let's start using Nix with our new "tuto-jdev" profile. Make sure you're using the right profile :
-{% highlight bash %}
+```bash
 nix-env --switch-profile $NIX_USER_PROFILE_DIR/tuto-jdev
-{% endhighlight%}
+```
 
 From that point, every package you install will be available under this profile.
 The operation above just update the link between ~/.nix-profile and some directory in /nix
 To check this connection, try:
-{% highlight bash %}
+```bash
 ls -altr ~/.nix-profile
-{% endhighlight%}
+```
 
 ## Install Nix packages
 Let us assume that you need some specific library, say for instance fftw.
 First of all, you need to check if this package is available, if so which is the version number and so on:
 
 The complete list of all available packages can be obtained thanks to the command
-{% highlight bash %}
+```bash
 nix-env -qaP
 
 ... **very long list**
-{% endhighlight %}
+```
 
 combined with grep to target a specific library:
-{% highlight bash %}
+```bash
 nix-env -qaP | grep fftw
 nixpkgs.fftw                                                   fftw-double-3.3.5
 nixpkgs.fftwLongDouble                                         fftw-long-double-3.3.5
 nixpkgs.fftwFloat                                              fftw-single-3.3.5
 nixpkgs.python27Packages.pyfftw                                python2.7-pyfftw-0.10.4
 nixpkgs.python35Packages.pyfftw                                python3.5-pyfftw-0.10.4
-{% endhighlight %}
+```
 
 (qaP : q as query, a as available and P as preserve-installed)
 
@@ -194,26 +197,26 @@ on the right column, the complete name of the package and on the
 left column, the attributes of the package (channel and components name between dots).
 
 Once you've find the package name you want to install, you can do it with the following option (by name) :
-{% highlight bash %}
+```bash
 nix-env -i fftw-double-3.3.5
-{% endhighlight %}
+```
 
 Or (by attributes) :
-{% highlight bash %}
+```bash
 nix-env -iA nixpkgs.fftw
-{% endhighlight %}
+```
 
 Check the consequences of these installations in ~/.nix-profile:
 
-{% highlight bash %}
+```bash
 ls -altr ~/.nix-profile/bin
 
 .nix-profile/bin/fftw-wisdom -> /nix/store/fbfbah2swf6ib9x0vk816y2ymiw648bp-fftw-double-3.3.6-pl1-dev/bin/fftw-wisdom
-{% endhighlight %}
+```
 
 Take a look at the dependencies :
 
-{% highlight bash %}
+```bash
 ldd .nix-profile/bin/fftw-wisdom
 	linux-vdso.so.1 (0x00007ffc02114000)
 	libfftw3_threads.so.3 => /nix/store/95z1jzxvy0db7jikifvdxn7hz11kjq8x-fftw-double-3.3.6-pl1/lib/libfftw3_threads.so.3 (0x00007f9521814000)
@@ -222,7 +225,7 @@ ldd .nix-profile/bin/fftw-wisdom
 	libpthread.so.0 => /nix/store/68sa3m89shpfaqq1b9xp5p1360vqhwx6-glibc-2.25/lib/libpthread.so.0 (0x00007f9520f5b000)
 	libc.so.6 => /nix/store/68sa3m89shpfaqq1b9xp5p1360vqhwx6-glibc-2.25/lib/libc.so.6 (0x00007f9520bbc000)
 	/nix/store/68sa3m89shpfaqq1b9xp5p1360vqhwx6-glibc-2.25/lib/ld-linux-x86-64.so.2 => /lib64/ld-linux-x86-64.so.2 (0x00007f9521a1b000)
-{% endhighlight %}
+```
 
 
 * libraries and binaries for fftw are now available in your local (profile) environment
@@ -232,28 +235,28 @@ ldd .nix-profile/bin/fftw-wisdom
 ## Remove packages
 
 To remove a package from your Nix profile, just type :
-{% highlight bash %}
+```bash
 nix-env -e the_package_you-re_searching_for
-{% endhighlight %}
+```
 
 ## Update packages
 
 The following command will update the named package and all its dependencies :
-{% highlight bash %}
+```bash
 nix-env -uA the_package_you-re_searching_for
-{% endhighlight %}
+```
 
 ## Nix easier with Nox
 Now we know the basics Nix commands, it could be interesting to install Nox. Nox is a Nix package that helps you manage Nix packages.
 
 Let's try it :
-{% highlight bash %}
+```bash
 nix-env -i nox
-{% endhighlight %}
+```
 
 Nox provide a command line interface to search and install packages.
 For instance, to install the fftw package with nox, you just have to type :
-```
+```bash
 nox fftw
 ```
 Nox lists the matching packages list. To install a specific version you just have to enter the number of the package in this list.
@@ -269,7 +272,7 @@ This first example is an introduction to the development of nix packages to inst
 other projects.
 
 The source code of this ''hello'' package is:
-```
+```bash
 { pkgs ? import <nixpkgs> {} }:
 with pkgs;
 
@@ -303,8 +306,6 @@ It takes as input a set, the attributes of which specify the inputs of the build
 ### attributes:
 A derivation is build by the function "mk.Derivation", using a set of "attributes" that is a list of key/value pairs (see "oned" derivation with following keys : "name", "version", "src", "builder").
 
-
-
 Nix expressions describe how to build packages from source and are collected in the nixpkgs repository. The Nix Packages collection (Nixpkgs) is a set of thousands of packages for the Nix package manager,
 
 ## How to add a package to nixpkgs :
@@ -313,7 +314,7 @@ Nix expressions describe how to build packages from source and are collected in 
 
 We are going to get a local copy of a the NixOS nikpkgs tree
 
-```
+```bash
 $ git clone git://github.com/NixOS/nixpkgs.git
 
 Initialized empty Git repository in /home/rochf/nixpkgs/.git/
@@ -322,8 +323,8 @@ Initialized empty Git repository in /home/rochf/nixpkgs/.git/
 
 Then, go to nixpkgs directory :
 
-```
-$ cd nixpkgs
+```bash
+cd nixpkgs
 ```
 
 ### Second step : find a good location for your package and write a nix expression for your package under it
@@ -336,13 +337,13 @@ pkgs/servers/monitoring
 
 Create a new directory for your package "mylib":
 
-```
-$ mkdir pkgs/development/libraries/mylib
+```bash
+mkdir pkgs/development/libraries/mylib
 ```
 
 Then create the nix expression of your library package, it is usually called default.nix :
 
-```
+```bash
 $ emacs pkgs/development/libraries/mylib/default.nix
 ```
 
@@ -359,10 +360,6 @@ The list of package mainteners is defined in :
 A listing of licence versions is available in :
 `~/nixpkgs/lib/licenses.nix`
 
-
-
-
-
 #### Example of "oned" package derivation
 Oned is a program which solve the Poisson equation using Jacobi method.
 
@@ -370,14 +367,14 @@ The code is available at "http://www.pdc.kth.se:8080/pdc/education/tutorials/mpi
 
 A good place for nix expression of the "oned" package, seems to be : `pkgs/application/science/physics`
 
-```
+```bash
 $ mkdir pkgs/applications/science/physics/oned
 $ emacs pkgs/applications/science/physics/oned/default.nix
 ```
 
 you can use "nix-prefetch-url" command (or similar "nix-prefetch-git" command) to get the SHA-256 hash of source distributions.
 
-```
+```bash
 $ nix-prefetch-url http://www.pdc.kth.se:8080/pdc/education/tutorials/mpi/hybrid-lab/oned.c/at_download/file
 ```
 
@@ -387,8 +384,8 @@ Or, in case you have already downloaded the source code, use `sha256sum`" comman
 
 Ex:
 
-```
-$ sha256sum oned.tar.gz
+```bash
+sha256sum oned.tar.gz
 ```
 
 `buildInputs` defines a set of Nix packages dependencies for package build.
@@ -397,19 +394,16 @@ $ sha256sum oned.tar.gz
 
 `buildInputs` and `propagatebuildInputs` are `Meta attributes` ; Meta attributes contain informations about the package. You can choose the necessary ones (the list of available meta-attributes is well [specified](http://nixos.org/nixpkgs/manual/#chap-meta).
 
-
-
-
 Add your maintainer name with your email, respecting the alphabetical order :
 
-```
-$ emacs ~/nixpkgs/lib/maintainers.nix
+```bash
+emacs ~/nixpkgs/lib/maintainers.nix
 ```
 
 Declare the package in the list of packages :
 
-```
-$ emacs ~/nixpkgs/pkgs/top-level/all-packages.nix
+```bash
+emacs ~/nixpkgs/pkgs/top-level/all-packages.nix
 ```
 
 Add the following line (in the SCIENCE zone, and respecting the alphabetical order) :
@@ -418,8 +412,8 @@ Add the following line (in the SCIENCE zone, and respecting the alphabetical ord
 
 A Derivation for oned :
 
-```
-$ cat  ~/nixpkgs/pkgs/applications/science/physics/oned/default.nix
+```bash
+cat  ~/nixpkgs/pkgs/applications/science/physics/oned/default.nix
 
 { stdenv, fetchgit, openmpi }:
 
@@ -452,12 +446,12 @@ A few commands can help you to understand the nix profiles concept:
 
 First install the flex package version 2.5.35 in your own environment:
 
-```
-$ nix-env -i flex-2.5.35
+```bash
+nix-env -i flex-2.5.35
 ```
 Have a look to the user-environment links (each default-n-link is a nix profile):
 
-```
+```bash
 $ ls -al /nix/var/nix/profiles/
 total 32
 drwxr-xr-x. 3 rochf users 4096 13 juin  18:56 .
@@ -473,10 +467,11 @@ drwxr-xr-x. 3 rochf users 4096  3 mai   18:30 per-user
 $ ls -al /nix/var/nix/profiles/default-5-link/bin/flex
 lrwxrwxrwx. 1 rochf users 64  1 janv.  1970 /nix/var/nix/profiles/default-5-link/bin/flex -> /nix/store/cwnv702d155b6y3h8zqr2v796bqwcrzd-flex-2.5.35/bin/flex
 ```
+
 The flex installation was done in the current profile (with a link to the last installed version).
 Now install a new flex version:
 
-```
+```bash
 $ nix-env -i flex-2.6.1
 
 $ ls -al /nix/var/nix/profiles/default
