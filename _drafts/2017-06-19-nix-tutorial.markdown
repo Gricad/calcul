@@ -44,7 +44,7 @@ bash <(curl https://nixos.org/nix/install)
 ```
 **Optionnal** : If you don't have sudo installed or if you're not a sudoer, you have to execute this command as root :
 
-`mkdir -m 0755 /nix && chown your_login /nix`
+`mkdir -m 0755 /nix && chown <your_login> /nix`
 
 From this point, you should see something like this :
 
@@ -54,7 +54,7 @@ bash <(curl https://nixos.org/nix/install)
 performing a single-user installation of Nix...
 copying Nix to /nix/store...............................
 initialising Nix database...
-creating /home/your_login/.nix-profile
+creating /home/<your_login>/.nix-profile
 installing ‘nix-1.11.9’
 building path(s) ‘/nix/store/7dv1lghxz40rbvv9ffg7fq2as972a4r7-user-environment’
 created 6 symlinks in user environment
@@ -66,7 +66,7 @@ created 2 symlinks in user environment
 Installation finished!  To ensure that the necessary environment
 variables are set, either log in again, or type
 
-  . /home/your_login/.nix-profile/etc/profile.d/nix.sh
+  . /home/<your_login>/.nix-profile/etc/profile.d/nix.sh
 
 in your shell.
 ```
@@ -85,21 +85,28 @@ rm -rf ~/.nix-*
 
 ## Activate your Nix environments
 
-First you have to source the following script to use your new Nix environment :
+The install script tels you to  source the following script to use your new Nix environment : ```~/.nix-profile/etc/profile.d/nix.sh```
+This creates a set of variables and configure the PATH variable to point to your default nix profile.
+
+But by default, a single user Nix installation does not set up the "profiles" feature. As we want to use it, we are going to set up a copy of the provided environment file. Actually, we just have to add the path of the default profile that contains the nix package:
 
 ```bash
-source ~/.nix-profile/etc/profile.d/nix.sh
+cp /nix/var/nix/profiles/default/etc/profile.d/nix.sh ~/nix.sh
+echo "export PATH=/nix/var/nix/profiles/default/bin:$PATH" >> ~/nix.sh
 ```
 
-This create a set of variables and configure the PATH variable to point to your default nix profile.
+Then we can load the Nix environment:
+```bash
+source ~/nix.sh
+```
 
 You can check changes typing :
 
 ```bash
 env | grep nix
 
-NIX_PATH=nixpkgs=/home/your_login/.nix-defexpr/channels/nixpkgs
-PATH=/home/your_login/.nix-profile/bin:/home/your_login/.nix-profile/sbin:/usr/local/bin:/usr/bin:/bin:
+NIX_PATH=nixpkgs=/home/<your_login>/.nix-defexpr/channels/nixpkgs
+PATH=/nix/var/nix/profiles/default/bin:/home/<your_login>/.nix-profile/bin:/home/<your_login>/.nix-profile/sbin:/usr/local/bin:/usr/bin:/bin:
 ```
 
 ## Working with profiles, create user environment
@@ -110,38 +117,23 @@ Users can switch between each profiles and each profile history levels.
 What is my current profile ?
 Nix automaticaly create your first "default" profile. It create a symbolic link pointing to **/nix/var/nix/profiles/default**.
 ```bash
-ls -l ~/.nix-profile/
-lrwxr-xr-x  1 your_login  staff  29 15 nov  2016 .nix-profile -> /nix/var/nix/profiles/default
+ls -l ~/.nix-profile
+lrwxr-xr-x  1 <your_login>  staff  29 15 nov  2016 .nix-profile -> /nix/var/nix/profiles/default
 ```
 
-To create a new profile and switch to :
+To create a new profile and switch to it:
 ```bash
-nix-env --switch-profile /nix/var/nix/profiles/per-user/your_login/tuto-jdev
+nix-env --switch-profile /nix/var/nix/profiles/per-user/<your_login>/tuto-jdev
 ```
 
 With this command, Nix create the "tuto-jdev" profile if it doesn't exist, and switch to it.
 You can check changes :
 ```bash
-ls -l ~/.nix-profile/
-lrwxr-xr-x  1 your_login  staff  29 15 nov  2016 .nix-profile -> /nix/var/nix/profiles/tuto-jdev
+ls -l ~/.nix-profile
+lrwxr-xr-x  1 <your_login>  staff  29 15 nov  2016 .nix-profile -> /nix/var/nix/profiles/per-user/<your_login>/tuto-jdev
 ```
 
 You can now work with differents profiles and switch between them.
-
-You can undo a **nix-env** command with :
-```bash
-nix-env --rollback
-```
-
-To view the entire profile history (called "links generations") :
-```bash
-nix-env --list-generations
-```
-
-You can directly return to a specific generation with its Id :
-```bash
-nix-env --switch-generation 42
-```
 
 You can have as much profile as needed. That way, you can have many environments.
 
@@ -158,7 +150,7 @@ Moreover, thanks to profile, a single user can easyly switch between different c
 
 Let's start using Nix with our new "tuto-jdev" profile. Make sure you're using the right profile :
 ```bash
-nix-env --switch-profile $NIX_USER_PROFILE_DIR/tuto-jdev
+nix-env --switch-profile /nix/var/nix/profiles/per-user/<your_login>/tuto-jdev
 ```
 
 From that point, every package you install will be available under this profile.
@@ -169,6 +161,16 @@ ls -altr ~/.nix-profile
 ```
 
 ## Install Nix packages
+To install a package we use the ```nix-env -i``` command. For example:
+```bash
+~$ nix-env -i hello
+installing ‘hello-2.10’
+~$ hello
+Hello, world!
+~$ which hello
+/home/<your_login>/.nix-profile/bin/hello
+```
+
 Let us assume that you need some specific library, say for instance fftw.
 First of all, you need to check if this package is available, if so which is the version number and so on:
 
@@ -229,6 +231,30 @@ ldd .nix-profile/bin/fftw-wisdom
 * libraries and binaries for fftw are now available in your local (profile) environment
 * this environment (.nix-profile) contains only symbolic links
 * everything has been installed in /nix
+
+## Profile rollback and generations
+
+Each time you do a Nix operation in your profile, it creates a new generation of it. You can switch to every generations of a given profile.
+
+You can undo a **nix-env** command with :
+```bash
+~$ nix-env -q
+fftw-double-3.3.5
+hello-2.10
+~$ nix-env --rollback
+switching from generation 4 to 3
+~$ nix-env -q
+hello-2.10```
+
+To view the entire profile history (called "links generations") :
+```bash
+nix-env --list-generations
+```
+
+You can directly return to a specific generation with its Id :
+```bash
+nix-env --switch-generation 2
+```
 
 ## List installed packages
 To list installed packages in your current profile type :
