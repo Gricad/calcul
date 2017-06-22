@@ -182,12 +182,11 @@ nix-env -qaP
 combined with grep to target a specific library:
 ```bash
 nix-env -qaP | grep fftw
-nixpkgs.fftw                                                   fftw-double-3.3.5
-nixpkgs.fftwLongDouble                                         fftw-long-double-3.3.5
-nixpkgs.fftwFloat                                              fftw-single-3.3.5
+nixpkgs.fftw                                                   fftw-double-3.3.6-pl1
+nixpkgs.fftwLongDouble                                         fftw-long-double-3.3.6-pl1
+nixpkgs.fftwFloat                                              fftw-single-3.3.6-pl1
 nixpkgs.python27Packages.pyfftw                                python2.7-pyfftw-0.10.4
-nixpkgs.python35Packages.pyfftw                                python3.5-pyfftw-0.10.4
-```
+nixpkgs.python36Packages.pyfftw                                python3.6-pyfftw-0.10.4```
 
 (qaP : q as query, a as available and P as preserve-installed)
 
@@ -197,7 +196,7 @@ left column, the attributes of the package (channel and components name between 
 
 Once you've find the package name you want to install, you can do it with the following option (by name) :
 ```bash
-nix-env -i fftw-double-3.3.5
+nix-env -i fftw-double-3.3.6-pl1
 ```
 
 Or (by attributes) :
@@ -217,13 +216,13 @@ Take a look at the dependencies :
 
 ```bash
 ldd .nix-profile/bin/fftw-wisdom
-	linux-vdso.so.1 (0x00007ffc02114000)
-	libfftw3_threads.so.3 => /nix/store/95z1jzxvy0db7jikifvdxn7hz11kjq8x-fftw-double-3.3.6-pl1/lib/libfftw3_threads.so.3 (0x00007f9521814000)
-	libfftw3.so.3 => /nix/store/95z1jzxvy0db7jikifvdxn7hz11kjq8x-fftw-double-3.3.6-pl1/lib/libfftw3.so.3 (0x00007f952148c000)
-	libm.so.6 => /nix/store/68sa3m89shpfaqq1b9xp5p1360vqhwx6-glibc-2.25/lib/libm.so.6 (0x00007f9521179000)
-	libpthread.so.0 => /nix/store/68sa3m89shpfaqq1b9xp5p1360vqhwx6-glibc-2.25/lib/libpthread.so.0 (0x00007f9520f5b000)
-	libc.so.6 => /nix/store/68sa3m89shpfaqq1b9xp5p1360vqhwx6-glibc-2.25/lib/libc.so.6 (0x00007f9520bbc000)
-	/nix/store/68sa3m89shpfaqq1b9xp5p1360vqhwx6-glibc-2.25/lib/ld-linux-x86-64.so.2 => /lib64/ld-linux-x86-64.so.2 (0x00007f9521a1b000)
+	linux-vdso.so.1 (0x00007ffdd2994000)
+	libfftw3_threads.so.3 => /nix/store/95z1jzxvy0db7jikifvdxn7hz11kjq8x-fftw-double-3.3.6-pl1/lib/libfftw3_threads.so.3 (0x00007fadaa6ce000)
+	libfftw3.so.3 => /nix/store/95z1jzxvy0db7jikifvdxn7hz11kjq8x-fftw-double-3.3.6-pl1/lib/libfftw3.so.3 (0x00007fadaa346000)
+	libm.so.6 => /nix/store/68sa3m89shpfaqq1b9xp5p1360vqhwx6-glibc-2.25/lib/libm.so.6 (0x00007fadaa033000)
+	libpthread.so.0 => /nix/store/68sa3m89shpfaqq1b9xp5p1360vqhwx6-glibc-2.25/lib/libpthread.so.0 (0x00007fada9e15000)
+	libc.so.6 => /nix/store/68sa3m89shpfaqq1b9xp5p1360vqhwx6-glibc-2.25/lib/libc.so.6 (0x00007fada9a76000)
+	/nix/store/68sa3m89shpfaqq1b9xp5p1360vqhwx6-glibc-2.25/lib/ld-linux-x86-64.so.2 => /lib64/ld-linux-x86-64.so.2 (0x00007fadaa8d5000)
 ```
 
 
