@@ -245,12 +245,13 @@ Each time you do a Nix operation in your profile, it creates a new generation of
 You can undo a **nix-env** command with :
 ```bash
 ~$ nix-env -q
-fftw-double-3.3.5
+fftw-double-3.3.6-pl1
 hello-2.10
 ~$ nix-env --rollback
 switching from generation 4 to 3
 ~$ nix-env -q
-hello-2.10```
+hello-2.10
+```
 
 To view the entire profile history (called "links generations") :
 ```bash
