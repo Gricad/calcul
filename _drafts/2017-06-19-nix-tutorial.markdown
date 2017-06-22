@@ -232,6 +232,12 @@ ldd .nix-profile/bin/fftw-wisdom
 * this environment (.nix-profile) contains only symbolic links
 * everything has been installed in /nix
 
+## List installed packages
+To list installed packages in your current profile type :
+```bash
+nix-env -q
+```
+
 ## Profile rollback and generations
 
 Each time you do a Nix operation in your profile, it creates a new generation of it. You can switch to every generations of a given profile.
@@ -254,12 +260,6 @@ nix-env --list-generations
 You can directly return to a specific generation with its Id :
 ```bash
 nix-env --switch-generation 2
-```
-
-## List installed packages
-To list installed packages in your current profile type :
-```bash
-nix-env -q
 ```
 
 ## Remove packages
