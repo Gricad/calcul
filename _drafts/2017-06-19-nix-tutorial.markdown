@@ -93,6 +93,8 @@ But by default, a single user Nix installation does not set up the "profiles" fe
 ```bash
 cp /nix/var/nix/profiles/default/etc/profile.d/nix.sh ~/nix.sh
 echo "export PATH=/nix/var/nix/profiles/default/bin:$PATH" >> ~/nix.sh
+# If you are under MACOS, also add:
+echo "export NIX_SSL_CERT_FILE=/nix/var/nix/profiles/default/etc/ssl/certs/ca-bundle.crt" >> ~/nix.sh
 ```
 
 Then we can load the Nix environment:
