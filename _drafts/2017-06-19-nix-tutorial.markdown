@@ -42,10 +42,9 @@ From a basic environment you just have to run the following command :
 ```bash
 bash <(curl https://nixos.org/nix/install)
 ```
-**Note** : If you don't have sudo installed or if you're not a sudoer, you have to execute this command as root :
-```bash
-mkdir -m 0755 /nix && chown your_login /nix
-```
+**Optionnal** : If you don't have sudo installed or if you're not a sudoer, you have to execute this command as root :
+
+`mkdir -m 0755 /nix && chown your_login /nix`
 
 From this point, you should see something like this :
 
@@ -81,7 +80,7 @@ The installation process only populates the directory `/nix` and creates a symbo
 You can easily uninstall Nix from your system typing :
 ```bash
 sudo rm -rf /nix
-rm -rf ~/.nix-profile
+rm -rf ~/.nix-*
 ```
 
 ## Activate your Nix environments
@@ -231,6 +230,12 @@ ldd .nix-profile/bin/fftw-wisdom
 * libraries and binaries for fftw are now available in your local (profile) environment
 * this environment (.nix-profile) contains only symbolic links
 * everything has been installed in /nix
+
+## List installed packages
+To list installed packages in your current profile type :
+```bash
+nix-env -q
+```
 
 ## Remove packages
 
