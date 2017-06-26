@@ -23,8 +23,8 @@ Shortly, for testing:
   * `cd <repository_of_the_blog>`
   * `bundle install`
   * `bundle exec jekyll serve` 
-* You can create drafts into `_drafts` and watch the drafts with:
-`bundle exec jekyll serve --draft`
+* You can create drafts into `_drafts`  (optionnaly with a publish date in the futur) and watch the drafts with:
+`bundle exec jekyll serve --draft --futur`
 
 [jekyll]: https://jekyllrb.com/
 [github-pages]: https://pages.github.com/
