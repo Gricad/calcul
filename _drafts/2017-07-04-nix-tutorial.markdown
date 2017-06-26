@@ -22,7 +22,8 @@ Introduction of this tutorial is currently in French, as a  [PDF presentation]({
   - Be a sudoer or have root access.
   - Bash, curl installed
 
-If you need, you can find a Dockerfile to create a Debian basic image with those prerequisites: [Docker image for this tutorial]({{site.url }}/tuto_nix/docker/debian_nix_tuto).
+If you need, you can find a Dockerfile to create a Debian basic image with those prerequisites:  
+[Docker image for this tutorial]({{site.url }}/tuto_nix/docker/debian_nix_tuto).
 
 ## Install Nix (single user mode)
 **Source** : http://nixos.org/nix/manual/#chap-installation
