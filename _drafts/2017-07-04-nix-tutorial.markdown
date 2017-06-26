@@ -13,20 +13,7 @@ table of content
 
 # Introduction
 
-1. un mot sur le déroulement de la séance
-* intro générale sur nix
-* comment l'installer sur sa machine
-* les bases : utilisation en boîte noire
-* utilisateur avancé : créer son paquet nix
-* administrateur : installation sur un serveur de calcul
-2. slides de Bruno à reprendre : https://ciment.ujf-grenoble.fr/wiki-pub/images/f/f7/NIX_BUX_2016.pdf
-Objectifs :
- * que fait nix, dans quelles circonstances est-ce utile?
-3. Rappel du contexte de ce tuto : retour d'expérience dans un contexte HPC
-
-## Overview of the differents packages managers
-## Bibliography
-## Vocabulary
+Introduction of this tutorial is currently in French, as a  [PDF presentation]({{ site.url }}/tuto_nix/media/NixIntroJDEV2017.pdf).
 
 
 # Using Nix packages manager
@@ -34,6 +21,8 @@ Objectifs :
   - Linux (64bits) / Mac OS
   - Be a sudoer or have root access.
   - Bash, curl installed
+
+If you need, you can find a Dockerfile to create a Debian basic image with those prerequisites: [Docker image for this tutorial]({{site.url }}/tuto_nix/docker/debian_nix_tuto).
 
 ## Install Nix (single user mode)
 **Source** : http://nixos.org/nix/manual/#chap-installation

@@ -19,4 +19,4 @@ markdown: kramdown
 
 theme: jekyll-theme-modernist
 
-exclude: [ old, nix, tuto_nix, scripts ]
+exclude: [ old, nix, scripts ]
