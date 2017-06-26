@@ -289,13 +289,13 @@ Nox lists the matching packages list. To install a specific version you just hav
 
 # Development environments
 
-## your first ''hello'' basic package
+## your first nix expression: a basic ''hello'' package
 
-This first example is an introduction to the development of nix packages to install custom libraries without interfering with
-other projects.
+This first example is an introduction to the development of nix packages.
 
 The source code of this ''hello'' package is:
-```bash
+
+```
 { pkgs ? import <nixpkgs> {} }:
 with pkgs;
 
@@ -309,27 +309,61 @@ in
     buildInputs = [ perl ];
     src = fetchurl {
       url = "ftp://ftp.nluug.nl/pub/gnu/hello/${name}.tar.gz";
-      md5 = "70c9ccf9fac07f762c24f2df2290784d";
+      sha256 = "c510e3ad0200517e3a14534e494b37dc0770efd733fc35ce2f445dd49c96a7d5";
     };
   };
 }
 ```
 
-This file is called a nix epression. The function "mkDerivation" use a nix expression block as input to build a derivation of the "hello" package.
+This file is a nix epression. The function "mkDerivation" use a nix expression block as input to build a derivation of the "hello" package.
 You can see some attributes (attributes are set of key/value pairs) like version/2.1.1.
-The building process of "hello" program needs some tools : a standard development environment (stdenv), a function to download the source code (fetchurl).
-The stdenv.mkDerivation execute the building operations (configure, make, make install, ...).
 
-### derivation:
+The building process of this "hello" program needs some tools : a standard development environment (stdenv), a function to download the source code (fetchurl).
+
+The stdenv.mkDerivation is a builtin function which executes the standard building operations (configure, make, make install).
+
+Create a test directory and put the nix expression in a hello.nix file:
+
+```
+$ mkdir test
+$ cd test
+$ vi hello.nix
+```
+
+Then build the program:
+
+```
+$ nix-build hello.nix
+```
+
+A new directory ''result'' has been created.
+
+```
+$ ls -al result/bin/
+total 16
+dr-xr-xr-x 2 tuto tuto    19 janv.  1  1970 .
+dr-xr-xr-x 4 tuto tuto    30 janv.  1  1970 ..
+-r-xr-xr-x 1 tuto tuto 13552 janv.  1  1970 hello
+
+$ ./result/bin/hello
+Bonjour, le monde!
+```
+
+### What is a derivation:
 A derivation from a Nix language view point is simply a set, with some attributes.
 Derivations are the building blocks of a Nix system, from a file system view point. The Nix language is used to describe such derivations.
 ''derivation'' is also the name of a built-in function. This important built-in function is used to describe a single derivation (a build action).
 It takes as input a set, the attributes of which specify the inputs of the build.
 
-### attributes:
+### What are attributes:
 A derivation is build by the function "mk.Derivation", using a set of "attributes" that is a list of key/value pairs (see "oned" derivation with following keys : "name", "version", "src", "builder").
 
-Nix expressions describe how to build packages from source and are collected in the nixpkgs repository. The Nix Packages collection (Nixpkgs) is a set of thousands of packages for the Nix package manager,
+
+Your first nix expression usage was successfull and it's time now to learn how to develop packages for the Nix community.
+
+As you already know, nix expressions describe how to build packages from source,  they are collected in the nixpkgs repository.
+
+The Nix Packages collection (Nixpkgs) is a set of thousands of packages for the Nix package manager, 
 
 ## How to add a package to nixpkgs :
 
@@ -750,6 +784,7 @@ stdenv.mkDerivation rec {
   };
 }
 ```
+
 If you want to install both versions of this package you have to use two differents derivations with two different names (hypre-openmpi and hypre-openmpi-lapack).
 For advanced usages, the same nix expression can be used to produce the different versions as shown in this example:
 
@@ -809,6 +844,23 @@ stdenv.mkDerivation rec {
 }
 
 ```
+
+For each siesta builder, you have to add a corresponding entry in the nixpkgs/pkgs/top-level/all-packages.nix
+
+For example:
+
+```
+ siesta = callPackage ../applications/science/molecular-dynamics/siesta {
+  };
+
+  siestaOpenMP = lowPrio (callPackage ../applications/science/molecular-dynamics/siesta {
+    mpiEnabled = false;
+    openmpEnabled = true;
+    openblasEnabled = false;
+    lapackEnabled = false;
+  });
+```
+
 
 
 
