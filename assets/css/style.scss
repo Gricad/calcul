@@ -128,3 +128,24 @@ h2, h2 a { color: rgba(11,45,74,1); }
 figure.highlight, figure.highlight pre, pre.highlight {
   margin: 1em 0;
 }
+
+blockquote {
+  background-color: #fffaaa;
+  border-radius: 1em;
+  width: 66%;
+  margin: 1em auto;
+  color: black;
+  position: relative;
+}
+
+blockquote:before {
+   content:"";
+   position: absolute;
+   right: 100%;
+   top: 26px;
+   width: 0;
+   height: 0;
+   border-top: 13px solid transparent;
+   border-right: 26px solid #fffaaa;
+   border-bottom: 13px solid transparent;
+}
