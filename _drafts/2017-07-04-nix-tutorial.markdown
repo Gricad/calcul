@@ -16,7 +16,7 @@ table of content
 Introduction of this tutorial is currently in French, as a  [PDF presentation]({{ site.url }}/tuto_nix/media/NixIntroJDEV2017.pdf).
 
 
-# Using Nix packages manager
+# Using the Nix packages manager
 ## Prerequisites
   - Linux (64bits) / Mac OS
   - Be a sudoer or have root access.
@@ -101,33 +101,36 @@ NIX_PATH=nixpkgs=/home/<your_login>/.nix-defexpr/channels/nixpkgs
 PATH=/nix/var/nix/profiles/default/bin:/home/<your_login>/.nix-profile/bin:/home/<your_login>/.nix-profile/sbin:/usr/local/bin:/usr/bin:/bin:
 ```
 
-## Working with profiles, create user environment
+## Working with profiles: user environment
 
-Nix packages manager uses "profiles" to helps users manage as many environments as needed.
-Users can switch between each profiles and each profile history levels.
+The Nix package manager provides a "profiles" feature to help users to manage as many environments as needed.
+Users can switch between profiles and navigate through the history of each profile.
 
 What is my current profile ?
-Nix automaticaly create your first "default" profile. It create a symbolic link pointing to **/nix/var/nix/profiles/default**.
+Nix automaticaly creates your first "default" profile: it's a symbolic link pointing to **/nix/var/nix/profiles/default**.
 ```bash
 ls -l ~/.nix-profile
 lrwxr-xr-x  1 <your_login>  staff  29 15 nov  2016 .nix-profile -> /nix/var/nix/profiles/default
 ```
 
-To create a new profile and switch to it:
+Here is how to create a new profile and switch to it (please, replace ```<your_login>``` by your real login string):
 ```bash
 nix-env --switch-profile /nix/var/nix/profiles/per-user/<your_login>/tuto-jdev
 ```
 
-With this command, Nix create the "tuto-jdev" profile if it doesn't exist, and switch to it.
-You can check changes :
+Note: *Under NiXOS or on some properly installed multi-user sites, the environment variable* $NIX_USER_PROFILE_DIR *might be correctly set and may be used to easily find the right path* ```/nix/var/nix/profiles/per-user/<your_login>```.
+
+With this command, Nix creates the "tuto-jdev" profile if it doesn't exist, and switch to it.
+You can check the change :
 ```bash
 ls -l ~/.nix-profile
 lrwxr-xr-x  1 <your_login>  staff  29 15 nov  2016 .nix-profile -> /nix/var/nix/profiles/per-user/<your_login>/tuto-jdev
 ```
+Note: *For the moment, this link may point to a non-existent directory as you don't have installed any package yet. The profile directory will be created at the first installation of a package, you'll see that in the next few lines of this tutorial!*
 
 You can now work with differents profiles and switch between them.
 
-You can have as much profile as needed. That way, you can have many environments.
+You can have as many profiles as you want. That way, you can have many environments. Once you'll be familiar to Nix, you'll see that you'll switch to a new profile each time you're starting something new! And this will miss you on other systems ;-)
 
 # Nix basics
 
