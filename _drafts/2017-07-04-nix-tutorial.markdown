@@ -166,7 +166,7 @@ Hello, world!
 /home/<your_login>/.nix-profile/bin/hello
 ```
 
-Let us assume that you need some specific library, say for instance fftw.
+Let us assume that you need some specific application, say for instance **boost**.
 First of all, you need to check if this package is available, if so which is the version number and so on:
 
 The complete list of all available packages can be obtained thanks to the command
@@ -175,55 +175,85 @@ nix-env -qaP
 
 ... **very long list**
 ```
+Note: *qaP : q as query, a as available and P as preserve-installed*
 
-combined with grep to target a specific library:
+combined with grep to target a specific program or library:
 ```bash
-nix-env -qaP | grep fftw
-nixpkgs.fftw                                                   fftw-double-3.3.6-pl1
-nixpkgs.fftwLongDouble                                         fftw-long-double-3.3.6-pl1
-nixpkgs.fftwFloat                                              fftw-single-3.3.6-pl1
-nixpkgs.python27Packages.pyfftw                                python2.7-pyfftw-0.10.4
-nixpkgs.python36Packages.pyfftw                                python3.6-pyfftw-0.10.4```
+nix-env -qaP | grep boost
+nixpkgs.boost155                                                  boost-1.55.0
+nixpkgs.boost159                                                  boost-1.59.0
+nixpkgs.boost160                                                  boost-1.60.0
+nixpkgs.python27Packages.boost                                    boost-1.62.0
+nixpkgs.python36Packages.boost                                    boost-1.62.0
+nixpkgs.boost                                                     boost-1.62.0
+nixpkgs.boost163                                                  boost-1.63.0
+nixpkgs.boost-build                                               boost-build-2.0-m12
+nixpkgs.boost_process                                             boost-process-0.5
+nixpkgs.pianobooster                                              pianobooster-0.6.4b
+nixpkgs.python27Packages.xgboost                                  python2.7-xgboost-0.60
+nixpkgs.python36Packages.xgboost                                  python3.6-xgboost-0.60
+nixpkgs.xgboost                                                   xgboost-0.60
+```
 
-(qaP : q as query, a as available and P as preserve-installed)
 
-Ok, now you're able to choose the fftw version that fits you. Notice
-on the right column, the complete name of the package and on the
-left column, the attributes of the package (channel and components name between dots).
+Ok, now you're able to choose the boost version that fits you. Notice on the right column, the complete name of the package and on the left column, the attributes of the package (channel and components name between dots). Also notice that a same package may be available with different attributes (for example here boost-1.62.0 is available with python27 or python36 bindings).
 
 Once you've find the package name you want to install, you can do it with the following option (by name) :
 ```bash
-nix-env -i fftw-double-3.3.6-pl1
+nix-env -i boost-1.60.0
 ```
 
 Or (by attributes) :
 ```bash
-nix-env -iA nixpkgs.fftw
+nix-env -iA nixpkgs.boost160
 ```
 
 Check the consequences of these installations in ~/.nix-profile:
 
 ```bash
-ls -altr ~/.nix-profile/bin
+ls -ld ~/.nix-profile/lib
+  .nix-profile/lib -> /nix/store/h4c1bmm3qk0vifhs3xd5p6c8apciv1gq-boost-1.60.0/lib
 
-.nix-profile/bin/fftw-wisdom -> /nix/store/fbfbah2swf6ib9x0vk816y2ymiw648bp-fftw-double-3.3.6-pl1-dev/bin/fftw-wisdom
+```
+
+Let's install another library, to populate a bit more our profile:
+
+```bash
+nix-env -iA nixpkgs.openblas
+```
+
+Now, check again your profile:
+
+```bash
+ls -ld ~/.nix-profile/lib
+  .nix-profile/lib
+```
+
+The *lib* directory was actualy a link to the same directory into the *boost* package, as we had only one package installed with a *lib* path. But now that we have another package having a *lib* directory too, it is now a real directory, and nix created a bunch of symbolic links inside:
+
+```bash
+ls -altr ~/.nix-profile/lib/libboost_atomic.so
+  .nix-profile/lib/libboost_atomic.so -> /nix/store/h4c1bmm3qk0vifhs3xd5p6c8apciv1gq-boost-1.60.0/lib/libboost_atomic.so
+ls -altr ~/.nix-profile/lib/libopenblas.so
+  .nix-profile/lib/libopenblas.so -> /nix/store/jxm1c9ks0bkfzkv40jwgwv4yxg0paxkq-openblas-0.2.19/lib/libopenblas.so
 ```
 
 Take a look at the dependencies :
 
 ```bash
-ldd .nix-profile/bin/fftw-wisdom
-	linux-vdso.so.1 (0x00007ffdd2994000)
-	libfftw3_threads.so.3 => /nix/store/95z1jzxvy0db7jikifvdxn7hz11kjq8x-fftw-double-3.3.6-pl1/lib/libfftw3_threads.so.3 (0x00007fadaa6ce000)
-	libfftw3.so.3 => /nix/store/95z1jzxvy0db7jikifvdxn7hz11kjq8x-fftw-double-3.3.6-pl1/lib/libfftw3.so.3 (0x00007fadaa346000)
-	libm.so.6 => /nix/store/68sa3m89shpfaqq1b9xp5p1360vqhwx6-glibc-2.25/lib/libm.so.6 (0x00007fadaa033000)
-	libpthread.so.0 => /nix/store/68sa3m89shpfaqq1b9xp5p1360vqhwx6-glibc-2.25/lib/libpthread.so.0 (0x00007fada9e15000)
-	libc.so.6 => /nix/store/68sa3m89shpfaqq1b9xp5p1360vqhwx6-glibc-2.25/lib/libc.so.6 (0x00007fada9a76000)
-	/nix/store/68sa3m89shpfaqq1b9xp5p1360vqhwx6-glibc-2.25/lib/ld-linux-x86-64.so.2 => /lib64/ld-linux-x86-64.so.2 (0x00007fadaa8d5000)
+ldd ~/.nix-profile/lib/libboost_atomic.so
+        linux-vdso.so.1 (0x00007fff2c9cd000)
+        librt.so.1 => /nix/store/f111ij1fc83965m48bf2zqgiaq88fqv5-glibc-2.25/lib/librt.so.1 (0x00007f2fe05b7000)
+        libstdc++.so.6 => /nix/store/xfrkm34sk0a13ha9bpki61l2k5g1v8dh-gcc-5.4.0-lib/lib/libstdc++.so.6 (0x00007f2fe023f000)
+        libm.so.6 => /nix/store/f111ij1fc83965m48bf2zqgiaq88fqv5-glibc-2.25/lib/libm.so.6 (0x00007f2fdff2c000)
+        libgcc_s.so.1 => /nix/store/f111ij1fc83965m48bf2zqgiaq88fqv5-glibc-2.25/lib/libgcc_s.so.1 (0x00007f2fdfd16000)
+        libpthread.so.0 => /nix/store/f111ij1fc83965m48bf2zqgiaq88fqv5-glibc-2.25/lib/libpthread.so.0 (0x00007f2fdfaf6000)
+        libc.so.6 => /nix/store/f111ij1fc83965m48bf2zqgiaq88fqv5-glibc-2.25/lib/libc.so.6 (0x00007f2fdf757000)
+        /lib64/ld-linux-x86-64.so.2 (0x0000560272cb0000)
+
 ```
 
-
-* libraries and binaries for fftw are now available in your local (profile) environment
+* libraries for *boost*, *blas*, and the *hello* binary are now available in your local (profile) environment
 * this environment (.nix-profile) contains only symbolic links
 * everything has been installed in /nix
 
@@ -240,13 +270,18 @@ Each time you do a Nix operation in your profile, it creates a new generation of
 You can undo a **nix-env** command with :
 ```bash
 ~$ nix-env -q
-fftw-double-3.3.6-pl1
+boost-1.60.0
 hello-2.10
+openblas-0.2.19
 ~$ nix-env --rollback
-switching from generation 4 to 3
+switching from generation 3 to 2
 ~$ nix-env -q
+boost-1.60.0
 hello-2.10
 ```
+
+As you can see, the last package we installed is no more here.
+
 
 To view the entire profile history (called "links generations") :
 ```bash
@@ -255,7 +290,7 @@ nix-env --list-generations
 
 You can directly return to a specific generation with its Id :
 ```bash
-nix-env --switch-generation 2
+$nix-env --switch-generation 3
 ```
 
 ## Remove packages
@@ -271,9 +306,11 @@ The following command will update the named package and all its dependencies :
 ```bash
 nix-env -uA the_package_you-re_searching_for
 ```
+And if the new version of the package  does not work, you can allways do a "--rollback"!
+
 
 ## Nix easier with Nox
-Now we know the basics Nix commands, it could be interesting to install Nox. Nox is a Nix package that helps you manage Nix packages.
+Now we know the basics Nix commands, it could be interesting to install Nox. Nox is a Nix package that helps you to search and install Nix packages.
 
 Let's try it :
 ```bash
