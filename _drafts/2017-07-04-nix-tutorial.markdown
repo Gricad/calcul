@@ -262,7 +262,7 @@ otool -L ~/.nix-profile/lib/libboost_atomic.dylib
 ## List installed packages
 To list installed packages in your current profile type :
 ```bash
-nix-env -q
+nix-env -qs
 ```
 
 ## Profile rollback and generations
@@ -292,7 +292,7 @@ nix-env --list-generations
 
 You can directly return to a specific generation with its Id :
 ```bash
-$nix-env --switch-generation 3
+nix-env --switch-generation 3
 ```
 
 ## Remove packages
