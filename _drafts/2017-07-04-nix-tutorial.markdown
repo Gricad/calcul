@@ -232,9 +232,9 @@ ls -ld ~/.nix-profile/lib
 The *lib* directory was actualy a link to the same directory into the *boost* package, as we had only one package installed with a *lib* path. But now that we have another package having a *lib* directory too, it is now a real directory, and nix created a bunch of symbolic links inside:
 
 ```bash
-ls -altr ~/.nix-profile/lib/libboost_atomic.so
+ls -altr ~/.nix-profile/lib/libboost_atomic.*
   .nix-profile/lib/libboost_atomic.so -> /nix/store/h4c1bmm3qk0vifhs3xd5p6c8apciv1gq-boost-1.60.0/lib/libboost_atomic.so
-ls -altr ~/.nix-profile/lib/libopenblas.so
+ls -altr ~/.nix-profile/lib/libopenblas.*
   .nix-profile/lib/libopenblas.so -> /nix/store/jxm1c9ks0bkfzkv40jwgwv4yxg0paxkq-openblas-0.2.19/lib/libopenblas.so
 ```
 
@@ -242,6 +242,8 @@ Take a look at the dependencies :
 
 ```bash
 ldd ~/.nix-profile/lib/libboost_atomic.so
+# or if you use MAC OS:
+otool -L ~/.nix-profile/lib/libboost_atomic.dylib
         linux-vdso.so.1 (0x00007fff2c9cd000)
         librt.so.1 => /nix/store/f111ij1fc83965m48bf2zqgiaq88fqv5-glibc-2.25/lib/librt.so.1 (0x00007f2fe05b7000)
         libstdc++.so.6 => /nix/store/xfrkm34sk0a13ha9bpki61l2k5g1v8dh-gcc-5.4.0-lib/lib/libstdc++.so.6 (0x00007f2fe023f000)
