@@ -367,6 +367,7 @@ $ nix-build hello.nix
 
 The first time you start such a build, you should normally see Nix downloading packages that are required for this operation. Then, the sources of the hello program are fetched, then built. A post-installation script is automatically started to eventually fix the runpath (RPATH) of the binaries and libraries, and fix the interpreter paths of every scripts to ensure that every dependency will be resolved from the /nix store.
 
+Note: *nix-build provides a convenient ```--kep-failed, -K``` option to keep the temporary build directory in case things goes wrong, so you can inspect the logs if any. But we'll see later another powerful tool to debug failures...* 
 
 A new link ''result'' has been created into the current directory. The destination of the link is the directory of the created package into the store.
 
@@ -393,7 +394,147 @@ hello - GNU hello 2.1.1
 
 ```
 
-## How to add a package to nixpkgs :
+What about trying to build again the same package?
+
+```bash
+rm result
+nix-build ./hello.nix
+```
+
+Well, as we changed nothing into the source code, the hash of our compiled expression is the same. So, Nix does nothing! It has just re-created the ```./result``` link to the corresponding package into the store. It means that if another user creates the same package as you just did, no re-build is trigged and the binaries will be efficiently shared!  
+
+### Debugging with nix-shell
+
+It's easy when all goes well... but how to deal things when the build process does not work as expected? 
+
+Let's introduce a bug into our expression. Simply comment the line with the buildInputs attribute, to remove the needed dependency with perl:
+
+```Nix
+{ pkgs ? import <nixpkgs> {} }:
+with pkgs;
+
+let
+  inherit stdenv fetchurl perl;
+  version = "2.1.1";
+in
+{
+    hello = stdenv.mkDerivation rec {
+    name = "hello-${version}";
+#    buildInputs = [ perl ];
+    src = fetchurl {
+      url = "ftp://ftp.nluug.nl/pub/gnu/hello/${name}.tar.gz";
+      sha256 = "c510e3ad0200517e3a14534e494b37dc0770efd733fc35ce2f445dd49c96a7d5";
+    };
+  };
+}
+```
+
+Then, re-build the package:
+
+```bash
+nix-build ./hello.nix
+```
+
+Now, it should fail with:
+```bash
+[...]
+make[2]: Entering directory '/tmp/nix-build-hello-2.1.1.drv-0/hello-2.1.1/man'
+help2man --name="Friendly Greeting Program" ../src/hello >hello.1
+/nix/store/wb34dgkpmnssjkq7yj4qbjqxpnapq0lw-bash-4.4-p12/bin/bash: help2man: command not found
+make[2]: *** [Makefile:282: hello.1] Error 127
+make[2]: Leaving directory '/tmp/nix-build-hello-2.1.1.drv-0/hello-2.1.1/man'
+make[1]: *** [Makefile:175: all-recursive] Error 1
+make[1]: Leaving directory '/tmp/nix-build-hello-2.1.1.drv-0/hello-2.1.1'
+make: *** [Makefile:131: all] Error 2
+builder for ‘/nix/store/zsp5846wm86p3fb408knmpa9nfl8k8lr-hello-2.1.1.drv’ failed with exit code 2
+error: build of ‘/nix/store/zsp5846wm86p3fb408knmpa9nfl8k8lr-hello-2.1.1.drv’ failed
+```
+
+Ok, then, we need to go deeper into the build process to see exactly where it fails. The built-in builder defines several phases executed in a specific order:  *unpackPhase patchPhase configurePhase buildPhase checkPhase installPhase fixupPhase*. Actually, there are more phases, allowing you more control of what is done before each main phase, but let's keep it simple ;-). Those phases are defined as bash functions into the shell executed when you start nix-build. And guess what, you can go into this shell! It's called *nix-shell* and it creates a completely isolated environment, with all the variables configured depending on the attributes you have put into your derivation.
+
+Let's try it:
+
+```bash
+nix-shell --pure ./hello.nix
+[nix-shell:~/test]$ 
+```
+
+From that point, let's check some interesting things. 
+
+```bash
+[nix-shell:~/test]$ echo $out
+```
+
+OK, you've got a variable defining the path of the store where your package will be installed! If you write your own builder, you would probably do something like ```./configure --prefix $out```.
+
+```bash
+[nix-shell:~/test]$ echo $PATH
+```
+
+What a long list! Yes, this path contains directories of packages needed to build something, like for example a GCC compiler.
+
+```bash
+[nix-shell:~/test]$ unpackPhase
+```
+
+This magically get the source code and unpack it into your current directory!
+
+```bash
+[nix-shell:~/test]$ cd $sourceRoot
+[nix-shell:~/test/hello-2.1.1]$ patchPhase
+[nix-shell:~/test/hello-2.1.1]$ configurePhase
+```
+
+Got it? We are executing, phase by phase, the builtin builder.
+
+Note: *For cmake fans, don't worry: if you put cmake into your buildInputs dependencies, the builder provides a cmakeConfigurePhase and cmakeBuildPhase to start the appropriate build process, and of course, you can provide a cmakeFlags attribute*
+
+And this is where things get wrong:
+
+```bash
+[nix-shell:~/test/hello-2.1.1]$ buildPhase
+```
+
+If you take a look into the ```man``` directory, you'll see the ```help2man``` script starting with a call to ```perl``` which is why we had *perl* as a buildInput dependency. But actually, here the error is that ```help2man``` is not found. I suppose that this script is used as a fallback when no ```help2man``` command is provided by the system. It might be cleaner to provide help2man instead of a full perl dependency.
+So, let's add the nix ```help2man``` package as a dependency to check if it may work.
+
+First, clean and exit from the nix-shell 
+
+```bash
+[nix-shell:~/test/hello-2.1.1]$ cd ..
+[nix-shell:~/test]$ rm -rf hello-2.1.1/
+[nix-shell:~/test]$ exit
+```
+
+Then, comment out the line you commented earlier, and replace *perl* by *help2man*:
+
+```Nix
+{ pkgs ? import <nixpkgs> {} }:
+with pkgs;
+
+let
+  inherit stdenv fetchurl help2man;
+  version = "2.1.1";
+in
+{
+    hello = stdenv.mkDerivation rec {
+    name = "hello-${version}";
+    buildInputs = [ help2man ];
+    src = fetchurl {
+      url = "ftp://ftp.nluug.nl/pub/gnu/hello/${name}.tar.gz";
+      sha256 = "c510e3ad0200517e3a14534e494b37dc0770efd733fc35ce2f445dd49c96a7d5";
+    };
+  };
+}
+```
+
+Then build!
+
+```bash
+nix-build  ./hello.nix
+```
+
+## How to add a package to nixpkgs
 
 So, you created a local package. This is generally the first step of a process that goes further, to the publication of the package into the nixpkgs repository. We will see that more in details.
 
