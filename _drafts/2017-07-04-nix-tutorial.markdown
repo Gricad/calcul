@@ -310,25 +310,6 @@ nix-env -uA the_package_you-re_searching_for
 ```
 And if the new version of the package  does not work, you can allways do a "--rollback"!
 
-
-## Nix easier with Nox
-Now we know the basics Nix commands, it could be interesting to install Nox. Nox is a Nix package that helps you to search and install Nix packages.
-
-Let's try it :
-```bash
-nix-env -i nox
-```
-
-Nox provide a command line interface to search and install packages.
-For instance, to install the fftw package with nox, you just have to type :
-```bash
-nox fftw
-```
-Nox lists the matching packages list. To install a specific version you just have to enter the number of the package in this list.
-
-![Nox search and install]({{ site.url }}/tuto_nix/media/nox_install.png)
-
-
 # Development environments
 
 ## your first nix expression: a basic ''hello'' package
