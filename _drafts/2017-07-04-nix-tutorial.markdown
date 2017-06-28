@@ -333,7 +333,9 @@ Nox lists the matching packages list. To install a specific version you just hav
 
 This first example is an introduction to the development of nix packages.
 
-The source code of this ''hello'' package is:
+A package is  built from a nix expression. Nix expressions describe the actions to build packages. (Searching the sources, compiling, installing).
+  
+A nix expression of ''hello'' package:
 
 ```
 { pkgs ? import <nixpkgs> {} }:
@@ -355,12 +357,14 @@ in
 }
 ```
 
-This file is a nix epression. The function "mkDerivation" use a nix expression block as input to build a derivation of the "hello" package.
-You can see some attributes (attributes are set of key/value pairs) like version/2.1.1.
 
-The building process of this "hello" program needs some tools : a standard development environment (stdenv), a function to download the source code (fetchurl).
+The function "stdenv.mkDerivation" use a nix block as input to build a "derivation" of the "hello" package, by executing for you the standard building operations (configure, make, make install).
+Some sets of key/value pairs, called attributes, are passed as environment variables to the build script of "mkDerivation" function. In the above nix expression, (version/2.1.1) is an example of such key/value pair.
 
-The stdenv.mkDerivation is a builtin function which executes the standard building operations (configure, make, make install).
+The building process of "hello" package needs some tools : a standard development environment (stdenv), a function to download the source code (fetchurl).
+
+### What is a derivation:
+A derivation consists of a build script, a set of environment variables and a set of dependencies (source files or other derivations). The Nix language is used to describe such derivations.
 
 Create a test directory and put the nix expression in a hello.nix file:
 
@@ -389,15 +393,17 @@ $ ./result/bin/hello
 Bonjour, le monde!
 ```
 
-### What is a derivation:
-A derivation from a Nix language view point is simply a set, with some attributes.
-Derivations are the building blocks of a Nix system, from a file system view point. The Nix language is used to describe such derivations.
-''derivation'' is also the name of a built-in function. This important built-in function is used to describe a single derivation (a build action).
-It takes as input a set, the attributes of which specify the inputs of the build.
+Now install the hello version 2.1.1 in your environment:
+```
+$ nix-env -f . -i hello 
+installing ‘hello-2.1.1’
+building path(s) ‘/nix/store/dqv9d96xmimb7xq4wj1jm3j7w4i9ik49-user-environment’
+created 500 symlinks in user environment
 
-### What are attributes:
-A derivation is build by the function "mk.Derivation", using a set of "attributes" that is a list of key/value pairs (see "oned" derivation with following keys : "name", "version", "src", "builder").
+$ hello --version
+hello - GNU hello 2.1.1
 
+```
 
 Your first nix expression usage was successfull and it's time now to learn how to develop packages for the Nix community.
 
@@ -409,7 +415,7 @@ The Nix Packages collection (Nixpkgs) is a set of thousands of packages for the 
 
 ### First step : get a local copy of nixpkgs tree
 
-We are going to get a local copy of a the NixOS nikpkgs tree
+Checkout the Nixpkgs source tree:
 
 ```bash
 $ git clone git://github.com/NixOS/nixpkgs.git
@@ -421,10 +427,12 @@ Initialized empty Git repository in /home/rochf/nixpkgs/.git/
 Then, go to nixpkgs directory :
 
 ```bash
-cd nixpkgs
+$ cd nixpkgs
 ```
 
-### Second step : find a good location for your package and write a nix expression for your package under it
+### Second step : find a good place for your package and write a nix expression for your package under it
+
+You can have a look at the existing Nix expressions in the pkgs/ tree to see how it's done.
 
 If your package is a library, you will place it under :
 pkgs/development/libraries
@@ -432,7 +440,7 @@ pkgs/development/libraries
 While a monitoring service will be place under :
 pkgs/servers/monitoring
 
-Create a new directory for your package "mylib":
+For example, if you are developping a package for a "mylib" library, create a new directory for your package:
 
 ```bash
 mkdir pkgs/development/libraries/mylib
@@ -446,21 +454,27 @@ $ emacs pkgs/development/libraries/mylib/default.nix
 
 You can copy/paste the default.nix file of another library and modify it to adapt to your own library.
 
-The list of packages is defined in:
+The list of all packages is defined in:
 `~/nixpkgs/pkgs/top-level/all-packages.nix`
 
 If you add a new package, add a line for it.
+You can use as model one of the other packages ''callPackage'' lines.
+Ths line is a call to the function defined in your default.nix  
+(See the "oned" example below).
 
-The list of package mainteners is defined in :
-`~/nixpkgs/lib/mainteners.nix`
+The list of package maintainers is defined in :
+`~/nixpkgs/lib/maintainers.nix`
 
-A listing of licence versions is available in :
+A listing of licenses versions is available in :
 `~/nixpkgs/lib/licenses.nix`
+
+The [Nixpkgs Contributors Guide](https://nixos.org/releases/nixpkgs/nixpkgs-17.03pre91272.7e273d9/manual/) can help you.
+
 
 #### Example of "oned" package derivation
 Oned is a program which solve the Poisson equation using Jacobi method.
 
-The code is available at "http://www.pdc.kth.se:8080/pdc/education/tutorials/mpi/hybrid-lab/oned.c/at_download/file"  
+The code is available at "https://www.pdc.kth.se/education/tutorials/mpi/hybrid-lab/oned.c"  
 
 A good place for nix expression of the "oned" package, seems to be : `pkgs/application/science/physics`
 
@@ -472,7 +486,11 @@ $ emacs pkgs/applications/science/physics/oned/default.nix
 you can use "nix-prefetch-url" command (or similar "nix-prefetch-git" command) to get the SHA-256 hash of source distributions.
 
 ```bash
-$ nix-prefetch-url http://www.pdc.kth.se:8080/pdc/education/tutorials/mpi/hybrid-lab/oned.c/at_download/file
+$ nix-prefetch-url https://www.pdc.kth.se/education/tutorials/mpi/hybrid-lab/oned.c
+downloading ‘https://www.pdc.kth.se/education/tutorials/mpi/hybrid-lab/oned.c’... [0/0 KiB, 0.0 KiB/s]
+path is ‘/nix/store/iw1xyii9wqb1ly5w95ni7rlwsv4q2pp5-oned.c’
+1585yzy1gkg3bxfg19mh3ag1x7yik2h3lg5kz705d3jk9dhjg03b
+
 ```
 
 *1585yzy1gkg3bxfg19mh3ag1x7yik2h3lg5kz705d3jk9dhjg03b*
@@ -482,7 +500,7 @@ Or, in case you have already downloaded the source code, use `sha256sum`" comman
 Ex:
 
 ```bash
-sha256sum oned.tar.gz
+sha256sum oned.c
 ```
 
 `buildInputs` defines a set of Nix packages dependencies for package build.
@@ -507,7 +525,45 @@ Add the following line (in the SCIENCE zone, and respecting the alphabetical ord
 
 `oned = callPackage ../applications/science/physics/oned  { };`
 
-A Derivation for oned :
+
+A nix expression for "oned":
+```
+{ stdenv, fetchurl, openmpi }:
+
+stdenv.mkDerivation rec {
+  name = "oned";
+  src = fetchurl {
+     url = "https://www.pdc.kth.se/education/tutorials/mpi/hybrid-lab/oned.c";
+     sha256 = "1585yzy1gkg3bxfg19mh3ag1x7yik2h3lg5kz705d3jk9dhjg03b";
+  };
+
+  builder = builtins.toFile "builder.sh"
+  "
+  source $stdenv/setup
+  mpicc -w -o oned.exe $src
+  mkdir $out
+  mkdir $out/bin
+  cp oned.exe $out/bin
+  ";
+
+  buildInputs = [ openmpi ];
+
+  meta = {
+    description = "JDEV 2017 Nix tutoriel";
+    license     = stdenv.lib.licenses.gpl2;
+    platforms   = stdenv.lib.platforms.unix;
+  };
+}
+```
+In this case, you need to provide your own build script into a "builder" block, because configure and Makefile are not provided. 
+The builder starts with "source $stdenv/setup" to setup the environment and process the buidInputs.
+The $out variable is the location of the package under Nix store.
+
+## Another derivation for oned :
+
+Here, the sources provide a standard building process (configure, make, make install).
+you don't have to write any builder in your nix expression, a generic builder, included in the standard environment (stdenv) do it for you:
+
 
 ```bash
 cat  ~/nixpkgs/pkgs/applications/science/physics/oned/default.nix
@@ -535,83 +591,6 @@ stdenv.mkDerivation {
 }
 ```
 
-### A few definitions
-
-#### profiles
-
-A few commands can help you to understand the nix profiles concept:
-
-First install the flex package version 2.5.35 in your own environment:
-
-```bash
-nix-env -i flex-2.5.35
-```
-Have a look to the user-environment links (each default-n-link is a nix profile):
-
-```bash
-$ ls -al /nix/var/nix/profiles/
-total 32
-drwxr-xr-x. 3 rochf users 4096 13 juin  18:56 .
-drwxr-xr-x. 7 rochf users 4096  3 mai   18:30 ..
-lrwxrwxrwx. 1 rochf users   14 13 juin  18:56 default -> default-5-link
-lrwxrwxrwx. 1 rochf users   60  3 mai   18:30 default-1-link -> /nix/store/7dv1lghxz40rbvv9ffg7fq2as972a4r7-user-environment
-lrwxrwxrwx. 1 rochf users   60 13 juin  18:29 default-2-link -> /nix/store/a8vm5sbpry5y1cijdx2c4sygnxnzw10s-user-environment
-lrwxrwxrwx. 1 rochf users   60 13 juin  18:30 default-3-link -> /nix/store/cxjbqskymd8k5j15vc17d167cgrxw1y2-user-environment
-lrwxrwxrwx. 1 rochf users   60 13 juin  18:34 default-4-link -> /nix/store/q3an4jnmp8qzahb9bcanlinzg3xsvwpx-user-environment
-lrwxrwxrwx. 1 rochf users   60 13 juin  18:56 default-5-link -> /nix/store/yalvpxnrlkg79a1mj16snd8lavgc9s23-user-environment
-drwxr-xr-x. 3 rochf users 4096  3 mai   18:30 per-user
-
-$ ls -al /nix/var/nix/profiles/default-5-link/bin/flex
-lrwxrwxrwx. 1 rochf users 64  1 janv.  1970 /nix/var/nix/profiles/default-5-link/bin/flex -> /nix/store/cwnv702d155b6y3h8zqr2v796bqwcrzd-flex-2.5.35/bin/flex
-```
-
-The flex installation was done in the current profile (with a link to the last installed version).
-Now install a new flex version:
-
-```bash
-$ nix-env -i flex-2.6.1
-
-$ ls -al /nix/var/nix/profiles/default
-lrwxrwxrwx. 1 rochf users 14 13 juin  19:04 /nix/var/nix/profiles/default -> default-6-link
-
-$ ls -al /nix/var/nix/profiles/default-6-link/bin/flex
-lrwxrwxrwx. 1 rochf users 63  1 janv.  1970 /nix/var/nix/profiles/default-6-link/bin/flex -> /nix/store/k9ng0zfjf999dp96pphhhlfyazvwxjdd-flex-2.6.1/bin/flex
-```
-A new environment has been created.
-Install now another package:
-
-```
-$ nix-env -i fox
-$ ls -al /nix/var/nix/profiles/default
-lrwxrwxrwx. 1 rochf users 14 13 juin  19:08 /nix/var/nix/profiles/default -> default-7-link
-```
-Each time you're using the nix-env command, a new environment is created.
-
-As you can see below, both fox and flex links are created in this new environment.
-
-```
-$ ls -al /nix/var/nix/profiles/default-7-link/bin/fox-config
-lrwxrwxrwx. 1 rochf users 68  1 janv.  1970 /nix/var/nix/profiles/default-7-link/bin/fox-config -> /nix/store/pksh5q16xzikcwwbzjlqdlq5303s2lak-fox-1.7.9/bin/fox-config
-
-$ ls -al /nix/var/nix/profiles/default-7-link/bin/flex
-lrwxrwxrwx. 1 rochf users 63  1 janv.  1970 /nix/var/nix/profiles/default-7-link/bin/flex -> /nix/store/k9ng0zfjf999dp96pphhhlfyazvwxjdd-flex-2.6.1/bin/flex
-```
-
-Then switch to an older generation of environment:
-
-```
-$ nix-env --switch-generation 5
-switching from generation 7 to 5
-
-$ ls -al /nix/var/nix/profiles/default
-lrwxrwxrwx. 1 rochf users 14 13 juin  19:13 /nix/var/nix/profiles/default -> default-5-link
-```
-Let's note that ''default'' point to the current generation.
-
-This nice picture illustrates the generation mechanisms:
-![Profiles]({{site_url}}/tuto_nix/media/nix_arborescence.png)
-
-
 ### Third step: Building and installing the Package
 
 
@@ -626,7 +605,7 @@ The "-A attrPath" nix-env option select an attribute from the top-level Nix expr
 You can check that all the dynamically loaded libraries are inside the /nix/store directory:
 
 ```
-$ ldd /nix/store/9bf6yzn9s0lcppr6spl0c12nbrw36p71-oned/bin/oned.exe
+$ ldd /nix/store/<hash-code>-oned/bin/oned.exe
 ```
 
 Test the executable :
@@ -651,16 +630,6 @@ $ nix-env -f . -iA oned
 <em>created 67 symlinks in user environment</em>
 
 
-```
-$ nix-env -i ./result
-
-replacing old ‘oned’
-installing ‘oned’
-building path(s) ‘/nix/store/q90hj0l7vxwc23g1h0vhr7b72k0rcicp-user-environment'
-
-created 384 symlinks in user environment
-```
-
 Now we can test the oned program:
 
 ```
@@ -673,7 +642,7 @@ We need a mpi environment to be installed:
 ```
 $ nix-env -i openmpi
 
-$ mpirun -np 2 /nix/store/9bf6yzn9s0lcppr6spl0c12nbrw36p71-oned/bin/oned.exe 200
+$ mpirun -np 2 oned.exe 200
 ```
 
 #### Example of hypre Package : Adding the hypre library package to nixpkgs ; creation of a derivation.  
@@ -780,6 +749,7 @@ $ ls -al /nix/store/cmr0hkvq40b29gy5ppsylksg0yk99ypc-hypre-2.11.2/lib/`
 
 Test building shared libraries with openblas and liblapack:
 
+Now, we place the builder in a file, in the same directory that the nix expression.
 
 ```
 $ cat pkgs/development/libraries/hypre/builder.sh`
@@ -793,6 +763,7 @@ $ cat pkgs/development/libraries/hypre/builder.sh`
   make test
 ```
 
+The nix expression is now:
 ```
 $ cat pkgs/development/libraries/hypre/default.nix`
 
@@ -825,7 +796,9 @@ stdenv.mkDerivation rec {
 }
 ```
 
-If you want to install both versions of this package you have to use two differents derivations with two different names (hypre-openmpi and hypre-openmpi-lapack).
+At this step, you can use "attributes" to add variants of the package or
+to use two differents derivations with two different names (hypre-openmpi and hypre-openmpi-lapack).
+
 For advanced usages, the same nix expression can be used to produce the different versions as shown in this example:
 
 ```
@@ -849,7 +822,7 @@ stdenv.mkDerivation rec {
     sha256 = "2b495ae1bef087547444615f1318492e89fa2c00a4303c59f612769b87e73cfc";
   };
 
-  #hardeningDisable = [ "format" ];
+  hardeningDisable = [ "format" ];
 
   enableParallelBuilding = true;
 
@@ -901,7 +874,12 @@ For example:
   });
 ```
 
+## Adding your package in the nixpkgs main repository
 
+Read the Nixpkgs Contributors Guide to follow the guidelines.
+You have now to submit a
+patch or pull request to have it accepted into the main Nixpkgs
+repository.
 
 
 ## Annexe: Debug
@@ -912,7 +890,7 @@ The -K option of nix-build command keep a trace of the building process in /tmp.
 
 ### the builder phases
 
-The builder has these phases:
+The generic builder has a number of phases. The major phases are:
 
     First the environment is set up
     Unpack phase: we unpack the sources in the current directory (remember, Nix changes dir to a temporary directory first)
@@ -920,9 +898,6 @@ The builder has these phases:
     Configure phase: ./configure
     Build phase: make
     Install phase: make install
-
-The -K option of nix-env command keep a trace of the building process in /tmp.
-
 
 ### nix-shell
 
@@ -983,6 +958,12 @@ When compiling the code, some options of the standard environment provided by Ni
 can be changed, adding this line in your derivation:
 ```
 hardeningDisable = [ "format" ];
+```
+
+Adding your name in the maintainers file:
+```
+~/nixpkgs$ grep tuto lib/maintainers.nix 
+  tuto = "Tuto Nix Jdev2017 <tuto@tuto.net>";
 ```
 
 # Nix for HPC (multiuser mode)
