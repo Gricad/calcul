@@ -367,7 +367,7 @@ $ nix-build hello.nix
 
 The first time you start such a build, you should normally see Nix downloading packages that are required for this operation. Then, the sources of the hello program are fetched, then built. A post-installation script is automatically started to eventually fix the runpath (RPATH) of the binaries and libraries, and fix the interpreter paths of every scripts to ensure that every dependency will be resolved from the /nix store.
 
-Note: *nix-build provides a convenient ```--kep-failed, -K``` option to keep the temporary build directory in case things goes wrong, so you can inspect the logs if any. But we'll see later another powerful tool to debug failures...* 
+Note: *nix-build provides a convenient ```--keep-failed, -K``` option to keep the temporary build directory in case things goes wrong, so you can inspect the logs if any. But we'll see later another powerful tool to debug failures...* 
 
 A new link ''result'' has been created into the current directory. The destination of the link is the directory of the created package into the store.
 
@@ -382,7 +382,7 @@ $ ./result/bin/hello
 Bonjour, le monde!
 ```
 
-Installing the package is as simple as 
+Installing the package is simple as:
 ```
 $ nix-env -i ./result
 installing ‘hello-2.1.1’
