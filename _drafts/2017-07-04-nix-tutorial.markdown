@@ -312,15 +312,15 @@ And if the new version of the package  does not work, you can allways do a "--ro
 
 # Development environments
 
-## your first nix expression: a basic ''hello'' package
+## your first Nix expression: a basic ''hello'' package
 
 This first example is an introduction to the development of nix packages.
 
 A package is  built from a nix expression. Nix expressions describe the actions to build packages. (Searching the sources, compiling, installing).
   
-A nix expression of ''hello'' package:
+Here is an example for a basic packaging of the ''hello'' program:
 
-```
+```Nix
 { pkgs ? import <nixpkgs> {} }:
 with pkgs;
 
@@ -340,14 +340,16 @@ in
 }
 ```
 
+We can see 3 main blocks:
+- In the first block, we basically tell that we are going to import the whole 'nixpkgs' set of builtin functions and packages that are available into your Nix environment. This is where the ```$NIX_PATH``` environment variable seen earlier makes sense.
+- In the next block, we are setting up attributes that will be available inside the third block
+- The last block consists of the actual creation of the package: the *derivation*. A derivation is the name given by Nix to create something from other stuff. The builtin function *.mkDerivation*, provided by *stdenv*, is used to create a package starting from attributes which are key/value pairs.
 
-The function "stdenv.mkDerivation" use a nix block as input to build a "derivation" of the "hello" package, by executing for you the standard building operations (configure, make, make install).
-Some sets of key/value pairs, called attributes, are passed as environment variables to the build script of "mkDerivation" function. In the above nix expression, (version/2.1.1) is an example of such key/value pair.
+Some attributes are required (like *name*). A lot of others are optional. It is the case of *builder* for example, that is not present in this example as we will use the builtin standard builder. The builder is the part of the packaging that creates the executables, typically "configure, make, make install". The *buildInputs* attribute defines a list describing all the other packages required as a dependency for the build. In this example, we need "perl" during the build, so the "perl" package will be available into the build environment during the creation of this hello package. 
 
-The building process of "hello" package needs some tools : a standard development environment (stdenv), a function to download the source code (fetchurl).
+Finally, the *src* attribute defines the sources of our program to build. It makes use here of the *fetchurl* builtin function provided by stdenv to get the sources from a url and check the integrity with a provided hash.
 
-### What is a derivation:
-A derivation consists of a build script, a set of environment variables and a set of dependencies (source files or other derivations). The Nix language is used to describe such derivations.
+### Let's build our package!
 
 Create a test directory and put the nix expression in a hello.nix file:
 
@@ -357,13 +359,16 @@ $ cd test
 $ vi hello.nix
 ```
 
-Then build the program:
+Then build the package:
 
 ```
 $ nix-build hello.nix
 ```
 
-A new directory ''result'' has been created.
+The first time you start such a build, you should normally see Nix downloading packages that are required for this operation. Then, the sources of the hello program are fetched, then built. A post-installation script is automatically started to eventually fix the runpath (RPATH) of the binaries and libraries, and fix the interpreter paths of every scripts to ensure that every dependency will be resolved from the /nix store.
+
+
+A new link ''result'' has been created into the current directory. The destination of the link is the directory of the created package into the store.
 
 ```
 $ ls -al result/bin/
@@ -376,9 +381,9 @@ $ ./result/bin/hello
 Bonjour, le monde!
 ```
 
-Now install the hello version 2.1.1 in your environment:
+Installing the package is as simple as 
 ```
-$ nix-env -f . -i hello 
+$ nix-env -i ./result
 installing ‘hello-2.1.1’
 building path(s) ‘/nix/store/dqv9d96xmimb7xq4wj1jm3j7w4i9ik49-user-environment’
 created 500 symlinks in user environment
@@ -388,13 +393,9 @@ hello - GNU hello 2.1.1
 
 ```
 
-Your first nix expression usage was successfull and it's time now to learn how to develop packages for the Nix community.
-
-As you already know, nix expressions describe how to build packages from source,  they are collected in the nixpkgs repository.
-
-The Nix Packages collection (Nixpkgs) is a set of thousands of packages for the Nix package manager, 
-
 ## How to add a package to nixpkgs :
+
+So, you created a local package. This is generally the first step of a process that goes further, to the publication of the package into the nixpkgs repository. We will see that more in details.
 
 ### First step : get a local copy of nixpkgs tree
 
