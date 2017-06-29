@@ -165,12 +165,10 @@ You can now work with differents profiles and switch between them and have as ma
 
 # Nix basics
 
-
-> How to install, remove, update a package
->
-> How to list and find packages
->
-> How to check, rollback your profile
+> In this section, you will learn:
+> * How to install, remove, update a package
+> * How to list and find packages
+> * How to check, rollback your profile
 
 At this point it's important to understand the underlying mechanisms of nix for libraries installation and management.
 Nix is made to allow different users to have different configurations and to switch between them but
@@ -398,9 +396,11 @@ And if the new version of the package  does not work, you can allways do a "--ro
 > * How to create a local package
 > * How to debug a package and how the native builder works
 
+Under a Nix environment, creating a package is often the best way to install an application. You should not be afraid about that, it is very easy and satisfying. How many times have you installed a software, locally on your home, and when it's been done, you can't remember how you did? If you do this directly by creating a Nix package, you can't forget as everything will be described. Your application is built inside an isolated environment, with no dependency with the system. Furthermore, you can pass your package to a colleague, or to the Nix community! 
+
 ## Your first Nix expression: a basic ''hello'' package
 
-A package is  built from a nix "expression". Nix expressions describe the actions to build packages. (Getting the sources, compiling, installing).
+A package is  built from a nix "expression". Nix expressions describe the actions to build packages (getting the sources, patching, compiling, installing...).
   
 Here is a sample expression for a basic packaging of the ''hello'' program:
 
@@ -620,6 +620,13 @@ Then build!
 ```bash
 nix-build  ./hello.nix
 ```
+
+> Summary
+>
+> * a package is made by writting a *nix expression* into a file
+> * *stdenv.mkDerivation* is a powerful function used to create a new package with a lot of possible attributes. See the [Writing Nix Expressions](http://nixos.org/nix/manual/#chap-writing-nix-expressions) part of the Nix documentation for more informations
+> * use ```nix-build``` to build your package
+> * use ```nix-shell``` to enter into the environment of your package, check, debug and build manually
 
 # How to add a package to nixpkgs
 
