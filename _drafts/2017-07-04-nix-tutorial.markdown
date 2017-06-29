@@ -78,7 +78,7 @@ rm -rf ~/.nix-*
 The install script tels you to  source the following script to use your new Nix environment : ```~/.nix-profile/etc/profile.d/nix.sh```
 This creates a set of variables and configure the PATH variable to point to your default nix profile.
 
-But by default, a single user Nix installation does not set up the "profiles" feature. As we want to use it, we are going to set up a copy of the provided environment file. Actually, we just have to add the path of the default profile that contains the nix package:
+But by default, a single user Nix installation does not set up the "profiles" feature. As we want to use it, we are going to set up a modifed copy of the provided environment file. Actually, we just have to add the path of the default profile that contains the Nix package, to make it available even if we switch to a custom profile:
 
 ```bash
 cp /nix/var/nix/profiles/default/etc/profile.d/nix.sh ~/nix.sh
