@@ -630,9 +630,9 @@ nix-build  ./hello.nix
 
 # How to add a package to nixpkgs
 
-So, you created a local package. This is generally the first step of a process that goes further, to the publication of the package into the nixpkgs repository. We will see that more in details.
+> In the previous section, you learned how to create what we call (here at the Gricad team) a *local package*. That's a package that is based on the available nixpkgs distribution of your system Nix installation. We will now see how, with very minor differences, a such package could be integrated into the official nixpkgs repository.
 
-## First step : get a local copy of nixpkgs tree
+## First step : get a local copy of the nixpkgs tree
 
 Checkout the Nixpkgs source tree:
 
