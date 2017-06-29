@@ -96,9 +96,9 @@ As explained in the introduction of this tutorial, a **profile** is some kind of
 
 Consider for instance, the three profiles defined in the table below:
 
-**profiles**          |    **installed packages**
-**"my soft based on intel compilers" :**  | intel-devel 2015, mysoft-release-intel
-**"my soft based on gnu compilers"** :'      | gcc-wrapper-6.3.0, mysoft-release-gnu
+**profiles**                                                      |    **installed packages**
+**"my soft based on intel compilers" :**                          | intel-devel 2015, mysoft-release-intel
+**"my soft based on gnu compilers"** :'                           | gcc-wrapper-6.3.0, mysoft-release-gnu
 **"my soft, debug mode, based on gnu compilers' :** 		  |  gcc-wrapper-6.3.0, mysoft-debug-gnu, valgrind
 
 
@@ -416,6 +416,7 @@ in
     hello = stdenv.mkDerivation rec {
     name = "hello-${version}";
     buildInputs = [ perl ];
+    hardeningDisable = [ "format" ];
     src = fetchurl {
       url = "ftp://ftp.nluug.nl/pub/gnu/hello/${name}.tar.gz";
       sha256 = "c510e3ad0200517e3a14534e494b37dc0770efd733fc35ce2f445dd49c96a7d5";
@@ -505,6 +506,7 @@ in
     hello = stdenv.mkDerivation rec {
     name = "hello-${version}";
 #    buildInputs = [ perl ];
+    hardeningDisable = [ "format" ];
     src = fetchurl {
       url = "ftp://ftp.nluug.nl/pub/gnu/hello/${name}.tar.gz";
       sha256 = "c510e3ad0200517e3a14534e494b37dc0770efd733fc35ce2f445dd49c96a7d5";
@@ -604,6 +606,7 @@ in
     hello = stdenv.mkDerivation rec {
     name = "hello-${version}";
     buildInputs = [ help2man ];
+    hardeningDisable = [ "format" ];
     src = fetchurl {
       url = "ftp://ftp.nluug.nl/pub/gnu/hello/${name}.tar.gz";
       sha256 = "c510e3ad0200517e3a14534e494b37dc0770efd733fc35ce2f445dd49c96a7d5";
