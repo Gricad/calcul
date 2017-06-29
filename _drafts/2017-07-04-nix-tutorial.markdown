@@ -915,8 +915,7 @@ permittedInsecurePackages = [
 }
 ```
 
-When compiling the code, some options of the standard environment provided by Nix, are generating some warnings. This behavior
-can be changed, adding this line in your derivation:
+When compiling the code, some options of the standard environment provided by Nix makes some warnings to be treated as errors. This behavior can be changed, adding this line in your derivation:
 ```
 hardeningDisable = [ "format" ];
 ```
@@ -928,3 +927,5 @@ Adding your name in the maintainers file:
 ```
 
 # Nix for HPC (multiuser mode)
+
+This part is for system administrators, responsible of an HPC cluster. [This article](https://gricad.github.io/calcul/nix/hpc/2017/05/15/nix-on-hpc-platforms.html) describes the operations to set-up Nix on your Linux HPC system.
