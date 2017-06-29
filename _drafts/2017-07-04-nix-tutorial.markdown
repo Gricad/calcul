@@ -223,13 +223,14 @@ Sounds as if 'hello' has been installed in your home directory.
 But if you try 
 
 ```bash
-ls -altr /.nix-profile/bin
+ls -altr ~/.nix-profile/bin
 ```
 
 you will get something like
 
 ```bash
-hello -> /nix/store/bh26bk4rcqlxja3chgn6a3jv7yiqshg4-hello-2.10/bin/hello
+
+.nix-profile/bin -> /nix/store/3dlqv87hrrfjynj0brbn4h71g4g4g89z-hello-2.10/bin
 ```
 
 
