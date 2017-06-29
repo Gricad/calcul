@@ -92,7 +92,9 @@ Then we can load the Nix environment:
 source ~/nix.sh
 ```
 
-You can check changes typing :
+This sourcing can be safely added to your personnal shell initialisazion script (for example ```~/.bashrc```).
+
+You can check the changes into your environment:
 
 ```bash
 env | grep nix
