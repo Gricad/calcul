@@ -366,7 +366,7 @@ To view the entire profile history (called "links generations") :
 nix-env --list-generations
 ```
 
-You can directly return to a specific generation with its Id :
+You can directly return to a specific generation with its id number:
 ```bash
 nix-env --switch-generation 3
 ```
