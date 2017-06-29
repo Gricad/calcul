@@ -397,13 +397,11 @@ And if the new version of the package  does not work, you can allways do a "--ro
 > * How to create a local package
 > * How to debug a package and how the native builder works
 
-## your first Nix expression: a basic ''hello'' package
+## Your first Nix expression: a basic ''hello'' package
 
-This first example is an introduction to the development of nix packages.
-
-A package is  built from a nix expression. Nix expressions describe the actions to build packages. (Getting the sources, compiling, installing).
+A package is  built from a nix "expression". Nix expressions describe the actions to build packages. (Getting the sources, compiling, installing).
   
-Here is an example for a basic packaging of the ''hello'' program:
+Here is a sample expression for a basic packaging of the ''hello'' program:
 
 ```Nix
 { pkgs ? import <nixpkgs> {} }:
