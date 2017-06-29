@@ -872,7 +872,36 @@ You have now to create a pull request to have it reviewed and merged into the ma
 
 ## Annexe: Tips
 
-By default, unfree package installation are not allowed. We can change this behaviour :
+### More with nix-shell
+
+```nix-shell``` can also be used to enter into the environment of one or several existing packages, without even installing them, for example:
+
+```bash
+nix-shell -p python27 -p python27Packages.numpy
+```
+opens a shell in an isolated environment which contains python2.7 with the numpy module:
+`
+```bash
+[nix-shell:~]$ python -i
+Python 2.7.13 (default, Dec 17 2016, 20:05:07) 
+[GCC 5.4.0] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import numpy
+>>> 
+```
+You can even use nix-shell as the shebang of a script:
+
+```
+#! /usr/bin/env nix-shell
+#! nix-shell -i python27 python27Packages.numpy
+
+import numpy
+...
+```
+
+### Unfree packages
+
+By default, unfree packages installation is not allowed. We can change this behaviour :
 
 For `nixos-rebuild` you can set
 
@@ -915,12 +944,18 @@ permittedInsecurePackages = [
 }
 ```
 
-When compiling the code, some options of the standard environment provided by Nix makes some warnings to be treated as errors. This behavior can be changed, adding this line in your derivation:
+### Warnings treated as errors
+
+When compiling the code, some options of the standard environment provided by Nix makes some warnings to be treated as errors. The best thing to do is to create a patch to remove the warning. But, when you don't have the time to fix, this behavior can be changed, adding this line in your derivation:
 ```
 hardeningDisable = [ "format" ];
 ```
+Then, don't forget to make a patch later...
 
-Adding your name in the maintainers file:
+
+
+### Adding your name in the maintainers file
+
 ```
 ~/nixpkgs$ grep tuto lib/maintainers.nix 
   tuto = "Tuto Nix Jdev2017 <tuto@tuto.net>";
