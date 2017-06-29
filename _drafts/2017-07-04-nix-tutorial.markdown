@@ -382,13 +382,26 @@ nix-env -uA the_package_you-re_searching_for
 ```
 And if the new version of the package  does not work, you can allways do a "--rollback"!
 
-# Development environments
+> Summary
+> * Search for packages with ```nix-env -qaP |grep ...```
+> * Install packages with ```nix-env -i <package_name>``` or ```nix-env -iA <attribute>```
+> * List installed packages with ```nix-env -q```
+> * Remove packages with ```nix-env -e <package>```
+> * Do a rollback with ```nix-env --rollback``` or jump to a version of your profile with ```nix-env --switch-generation <id>```
+
+
+# Package development
+
+> In this section, you will learn:
+> * What is a Nix expression and a Nix derivation
+> * How to create a local package
+> * How to debug a package and how the native builder works
 
 ## your first Nix expression: a basic ''hello'' package
 
 This first example is an introduction to the development of nix packages.
 
-A package is  built from a nix expression. Nix expressions describe the actions to build packages. (Searching the sources, compiling, installing).
+A package is  built from a nix expression. Nix expressions describe the actions to build packages. (Getting the sources, compiling, installing).
   
 Here is an example for a basic packaging of the ''hello'' program:
 
@@ -606,11 +619,11 @@ Then build!
 nix-build  ./hello.nix
 ```
 
-## How to add a package to nixpkgs
+# How to add a package to nixpkgs
 
 So, you created a local package. This is generally the first step of a process that goes further, to the publication of the package into the nixpkgs repository. We will see that more in details.
 
-### First step : get a local copy of nixpkgs tree
+## First step : get a local copy of nixpkgs tree
 
 Checkout the Nixpkgs source tree:
 
@@ -627,7 +640,7 @@ Then, go to nixpkgs directory :
 $ cd nixpkgs
 ```
 
-### Second step : find a good place for your package and write a nix expression for your package under it
+## Second step : find a good place for your package and write a nix expression for your package under it
 
 You can have a look at the existing Nix expressions in the pkgs/ tree to see how it's done.
 
@@ -668,7 +681,7 @@ A listing of licenses versions is available in :
 The [Nixpkgs Contributors Guide](https://nixos.org/releases/nixpkgs/nixpkgs-17.03pre91272.7e273d9/manual/) can help you.
 
 
-#### Example of "oned" package derivation
+### Example of "oned" package derivation
 Oned is a program which solve the Poisson equation using Jacobi method.
 
 The code is available at "https://www.pdc.kth.se/education/tutorials/mpi/hybrid-lab/oned.c"  
@@ -756,7 +769,7 @@ In this case, you need to provide your own build script into a "builder" block, 
 The builder starts with "source $stdenv/setup" to setup the environment and process the buidInputs.
 The $out variable is the location of the package under Nix store.
 
-## Another derivation for oned :
+### Another derivation for oned :
 
 Here, the sources provide a standard building process (configure, make, make install).
 you don't have to write any builder in your nix expression, a generic builder, included in the standard environment (stdenv) do it for you:
@@ -788,7 +801,7 @@ stdenv.mkDerivation {
 }
 ```
 
-### Third step: Building and installing the Package
+## Third step: Building and installing the Package
 
 
 The build process is started with the nix-build command:
@@ -842,7 +855,7 @@ $ nix-env -i openmpi
 $ mpirun -np 2 oned.exe 200
 ```
 
-#### Example of hypre Package : Adding the hypre library package to nixpkgs ; creation of a derivation.  
+### Example of hypre Package : Adding the hypre library package to nixpkgs ; creation of a derivation.  
 
 hypre web page : https://computation.llnl.gov/projects/hypre-scalable-linear-solvers-multigrid-methods
 
