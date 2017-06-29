@@ -115,11 +115,6 @@ echo "export NIX_USER_PROFILE_DIR=/nix/var/nix/profiles/per-user/$USER " >> ~/ni
 echo "export NIX_SSL_CERT_FILE=/nix/var/nix/profiles/default/etc/ssl/certs/ca-bundle.crt" >> ~/nix.sh
 ```
 
-Notice the environment variable NIX_
-
-USER_PROFILE_DIR. It will be used later to define profiles.
-
-
 *Notice the environment variable NIX_USER_PROFILE_DIR that  will be used later to define profiles. Under NiXOS or on some properly installed multi-user sites, this variable might be already set properly during install.*
 
 
@@ -154,7 +149,7 @@ lrwxr-xr-x ... .nix-profile -> /nix/var/nix/profiles/per-user/<your-login>/tuto-
 
 Note: *For the moment, this link may point to a non-existent directory as you don't have installed any package yet. The profile directory will be created at the first installation of a package, you'll see that in the next few lines of this tutorial!*
 
-You can now work with differents profiles and switch between them and have as many profiles as you want. That way, you can have many environments. Once you'll be familiar to Nix, you'll see that you'll switch to a new profile each time you're starting something new! And this will miss you on other systems ;-)
+You can now work with differents profiles and switch between them and have as many profiles as you want. That way, you can have many environments. Once you'll be familiar to Nix, you'll see that you'll switch to a new profile each time you're starting something new! And you will miss this on other systems ;-)
 
 > Summary
 > * Always create one (or more) profile(s), to organise properly your different environments
