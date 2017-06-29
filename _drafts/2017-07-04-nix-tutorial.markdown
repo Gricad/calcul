@@ -16,25 +16,30 @@ table of content
 Introduction of this tutorial is currently in French, as a  [PDF presentation]({{ site.url }}/tuto_nix/media/NixIntroJDEV2017.pdf).
 
 
-# Using the Nix packages manager
+# Using Nix packages manager
+
+> _In this first section, you will learn_:
+>
+> * _how to **install** nix on your laptop,_
+> * _how to **setup** properly your working environment to use nix **profiles**,_
+> * _and obviously how to **remove** nix properly and completely._
+
 ## Prerequisites
   - Linux (64bits) / Mac OS
   - Be a sudoer or have root access.
   - Bash, curl installed
 
-If you need, you can find a Dockerfile to create a Debian basic image with those prerequisites:  
+If this prerequisites are not fullfilled or if you don't want to install nix on your system, you may
+try to run this tutorial inside a docker container. Try the following link, wich provides a Dockerfile and some directives :
 [Docker image for this tutorial]({{site.url }}/tuto_nix/docker/debian_nix_tuto).
 
 ## Install Nix (single user mode)
-**Source** : http://nixos.org/nix/manual/#chap-installation
+**Source** : <http://nixos.org/nix/manual/#chap-installation>
 
-From a basic environment you just have to run the following command :
+In a terminal, run :
 ```bash
 bash <(curl https://nixos.org/nix/install)
 ```
-**Optionnal** : If you don't have sudo installed or if you're not a sudoer, you have to execute this command as root :
-
-`mkdir -m 0755 /nix && chown <your_login> /nix`
 
 From this point, you should see something like this :
 
@@ -61,115 +66,184 @@ variables are set, either log in again, or type
 in your shell.
 ```
 
-
 The Nix package manager is now installed on your system and ready to be used.
 
 The installation process only populates the directory `/nix` and creates a symbolic link `~/.nix-profile` in your home directory.
 
+Check their contents and try
+```bash
+ls -al ~/.nix~
+ls -al /nix
+```
+
+*Remark : If you don't have sudo installed or if you're not a sudoer, before installing nix, run as root :*
+
+`mkdir -m 0755 /nix && chown <your_login> /nix`
+
+
 ## Uninstall Nix
-You can easily uninstall Nix from your system typing :
+Nix does not spread out all over your system, so you can easily uninstall it completely by doing:
 ```bash
 sudo rm -rf /nix
 rm -rf ~/.nix-*
 ```
 
-## Activate your Nix environments
+## Working with profiles : create several user environments
 
-The install script tels you to  source the following script to use your new Nix environment : ```~/.nix-profile/etc/profile.d/nix.sh```
-This creates a set of variables and configure the PATH variable to point to your default nix profile.
+At this stage, nix is properly installed on your system, but some extra configuration is required, especially to activate the "profiles" feature.
 
-But by default, a single user Nix installation does not set up the "profiles" feature. As we want to use it, we are going to set up a modifed copy of the provided environment file. Actually, we just have to add the path of the default profile that contains the Nix package, to make it available even if we switch to a custom profile:
+As explained in the introduction of this tutorial, a **profile** is some kind of user-defined environment, where you'll be able to 'install' and use a specific set of your choice of libraries, tools, binaries ...
 
+Consider for instance, the three profiles defined in the table below:
+
+**profiles**          |    **installed packages**
+**"my soft based on intel compilers" :**  | intel-devel 2015, mysoft-release-intel
+**"my soft based on gnu compilers"** :'      | gcc-wrapper-6.3.0, mysoft-release-gnu
+**"my soft, debug mode, based on gnu compilers' :** 		  |  gcc-wrapper-6.3.0, mysoft-debug-gnu, valgrind
+
+
+In that case, assuming you have defined these profiles, you can switch easily between three different setups of the same software (mysoft), without any interference between them.
+Notice that each user can have as many profiles as he wants.
+
+
+To activate this profile feature, we need to copy and update the nix.sh file provided by the installer:
 ```bash
 cp /nix/var/nix/profiles/default/etc/profile.d/nix.sh ~/nix.sh
-echo "export PATH=/nix/var/nix/profiles/default/bin:\$PATH" >> ~/nix.sh
+echo "export PATH=/nix/var/nix/profiles/default/bin:$PATH" >> ~/nix.sh
+echo "export NIX_USER_PROFILE_DIR=/nix/var/nix/profiles/per-user/$USER " >> ~/nix.sh
 # If you are under MACOS, also add:
 echo "export NIX_SSL_CERT_FILE=/nix/var/nix/profiles/default/etc/ssl/certs/ca-bundle.crt" >> ~/nix.sh
 ```
 
-Then we can load the Nix environment:
+Notice the environment variable NIX_
+
+USER_PROFILE_DIR. It will be used later to define profiles.
+
+
+*Notice the environment variable NIX_USER_PROFILE_DIR that  will be used later to define profiles. Under NiXOS or on some properly installed multi-user sites, this variable might be already set properly during install.*
+
+
+
+Finally, load nix environment:
+
 ```bash
 source ~/nix.sh
 ```
 
-This sourcing can be safely added to your personnal shell initialisazion script (for example ```~/.bashrc```).
+The installation and configuration process is over and you're ready to use nix.
 
-You can check the changes into your environment:
-
-```bash
-env | grep nix
-
-NIX_PATH=nixpkgs=/home/<your_login>/.nix-defexpr/channels/nixpkgs
-PATH=/nix/var/nix/profiles/default/bin:/home/<your_login>/.nix-profile/bin:/home/<your_login>/.nix-profile/sbin:/usr/local/bin:/usr/bin:/bin:
-```
-
-## Working with profiles: user environment
-
-The Nix package manager provides a "profiles" feature to help users to manage as many environments as needed.
-Users can switch between profiles and navigate through the history of each profile.
-
-What is my current profile ?
-Nix automaticaly creates your first "default" profile: it's a symbolic link pointing to **/nix/var/nix/profiles/default**.
+Your current profile is defined by the the .nix-profile symbolic link in your home directory.
+Nix automaticaly creates your first "default" profile : it's a symbolic link pointing to **/nix/var/nix/profiles/default**.
 ```bash
 ls -l ~/.nix-profile
 lrwxr-xr-x  1 <your_login>  staff  29 15 nov  2016 .nix-profile -> /nix/var/nix/profiles/default
 ```
 
-Here is how to create a new profile and switch to it (please, replace ```<your_login>``` by your real login string):
+To create a new profile, use *nix-env* command (remind that NIX_USER_PROFILE_DIR has been set to /nix/var/nix/profiles/per-user/<your_login>), for instance:
+
 ```bash
-nix-env --switch-profile /nix/var/nix/profiles/per-user/<your_login>/tuto-jdev
+nix-env --switch-profile $NIX_USER_PROFILE_DIR/tuto-jdev
 ```
 
-Note: *Under NiXOS or on some properly installed multi-user sites, the environment variable* $NIX_USER_PROFILE_DIR *might be correctly set and may be used to easily find the right path* ```/nix/var/nix/profiles/per-user/<your_login>```.
+and check:
 
-With this command, Nix creates the "tuto-jdev" profile if it doesn't exist, and switch to it.
-You can check the change :
 ```bash
 ls -l ~/.nix-profile
-lrwxr-xr-x  1 <your_login>  staff  29 15 nov  2016 .nix-profile -> /nix/var/nix/profiles/per-user/<your_login>/tuto-jdev
+lrwxr-xr-x ... .nix-profile -> /nix/var/nix/profiles/per-user/<your-login>/tuto-jdev
 ```
+
 Note: *For the moment, this link may point to a non-existent directory as you don't have installed any package yet. The profile directory will be created at the first installation of a package, you'll see that in the next few lines of this tutorial!*
 
-You can now work with differents profiles and switch between them.
+You can now work with differents profiles and switch between them and have as many profiles as you want. That way, you can have many environments. Once you'll be familiar to Nix, you'll see that you'll switch to a new profile each time you're starting something new! And this will miss you on other systems ;-)
 
-You can have as many profiles as you want. That way, you can have many environments. Once you'll be familiar to Nix, you'll see that you'll switch to a new profile each time you're starting something new! And this will miss you on other systems ;-)
+> Summary
+> * Always create one (or more) profile(s), to organise properly your different environments
+> * What is my current profile? 
+>   ```ls -al ~/.nix-profile ```
+> * Create/switch between profiles?
+>   ```nix-env --switch-profile $NIX_USER_PROFILE_DIR/some_name```
+> * What are my available profiles?
+>   ```ls -al $NIX_USER_PROFILE_DIR ```
+
+
 
 # Nix basics
 
+
+> How to install, remove, update a package
+>
+> How to list and find packages
+>
+> How to check, rollback your profile
+
 At this point it's important to understand the underlying mechanisms of nix for libraries installation and management.
 Nix is made to allow different users to have different configurations and to switch between them but
-with one and only one place where everything is installed : /nix.
+with *one and only one place where everything is installed* : /nix.
+
 One of the main benefits of using nix is that any user (understand non-root) is allowed to "install"
-packages in /nix. But this package will be available in the user environment through some trees of symlink
-between /nix and ~/.nix-profile.
+packages in /nix. This package will be available in the user environment through some trees of symlink
+between /nix and ~/.nix-profile and ready to be used by any other user.
 
-Moreover, thanks to profile, a single user can easyly switch between different configurations.
+Moreover, thanks to profiles, a single user can easily switch between different configurations.
 
-Let's start using Nix with our new "tuto-jdev" profile. Make sure you're using the right profile :
+Let us start using Nix with our new "tuto-jdev" profile. Make sure you're using the right profile :
 ```bash
 nix-env --switch-profile /nix/var/nix/profiles/per-user/<your_login>/tuto-jdev
 ```
 
-From that point, every package you install will be available under this profile.
-The operation above just update the link between ~/.nix-profile and some directory in /nix
-To check this connection, try:
+From that point, every new installed package will be available under this profile. 
+The operation above just updates the link between ~/.nix-profile and some directories in /nix
+
+Once again, check your profile and the linked directory:
 ```bash
 ls -altr ~/.nix-profile
 ```
 
-## Install Nix packages
-To install a package we use the ```nix-env -i``` command. For example:
+## Search and install a package with nix
+
+Most of nix operations are carried out using ```nix-env``` command.
+
+To install a package, use ```nix-env -i somename```. For instance:
 ```bash
 ~$ nix-env -i hello
 installing ‘hello-2.10’
+...
+```
+
+And the binary is now available in your path:
+
+```bash
 ~$ hello
 Hello, world!
 ~$ which hello
 /home/<your_login>/.nix-profile/bin/hello
 ```
 
+Sounds as if 'hello' has been installed in your home directory.
+But if you try 
+
+```bash
+ls -altr /.nix-profile/bin
+```
+
+you will get something like
+
+```bash
+hello -> /nix/store/bh26bk4rcqlxja3chgn6a3jv7yiqshg4-hello-2.10/bin/hello
+```
+
+
+Indeed, depending on what has been previously done on your system, the ```nix-env -i`` command will either download the corresponding package, install it
+in /nix/store and finally create the required links in your profile (.nix-profile/ ...) or just create the links, if the package is already 
+in /nix/store (previous install by you or another user).
+
+It means that hello binary is installed "system wide", in /nix/store, although you're not root.
+
+
+
+
 Let us assume that you need some specific application, say for instance **boost**.
-First of all, you need to check if this package is available, if so which is the version number and so on:
+First of all, you need to check if this package is available, if so which is the version number, and so on:
 
 The complete list of all available packages can be obtained thanks to the command
 ```bash
