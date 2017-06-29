@@ -72,7 +72,7 @@ The installation process only populates the directory `/nix` and creates a symbo
 
 Check their contents and try
 ```bash
-ls -al ~/.nix~
+ls -al ~/.nix-profile
 ls -al /nix
 ```
 
@@ -109,8 +109,8 @@ Notice that each user can have as many profiles as he wants.
 To activate this profile feature, we need to copy and update the nix.sh file provided by the installer:
 ```bash
 cp /nix/var/nix/profiles/default/etc/profile.d/nix.sh ~/nix.sh
-echo "export PATH=/nix/var/nix/profiles/default/bin:$PATH" >> ~/nix.sh
-echo "export NIX_USER_PROFILE_DIR=/nix/var/nix/profiles/per-user/$USER " >> ~/nix.sh
+echo "export PATH=/nix/var/nix/profiles/default/bin:\$PATH" >> ~/nix.sh
+echo "export NIX_USER_PROFILE_DIR=/nix/var/nix/profiles/per-user/\$USER " >> ~/nix.sh
 # If you are under MACOS, also add:
 echo "export NIX_SSL_CERT_FILE=/nix/var/nix/profiles/default/etc/ssl/certs/ca-bundle.crt" >> ~/nix.sh
 ```
@@ -124,6 +124,7 @@ Finally, load nix environment:
 ```bash
 source ~/nix.sh
 ```
+You can safely add this line into the initialization script of your shell (for example ```~/.bashrc```).
 
 The installation and configuration process is over and you're ready to use nix.
 
@@ -183,7 +184,7 @@ Moreover, thanks to profiles, a single user can easily switch between different 
 
 Let us start using Nix with our new "tuto-jdev" profile. Make sure you're using the right profile :
 ```bash
-nix-env --switch-profile /nix/var/nix/profiles/per-user/<your_login>/tuto-jdev
+nix-env --switch-profile $NIX_USER_PROFILE_DIR/tuto-jdev
 ```
 
 From that point, every new installed package will be available under this profile. 
