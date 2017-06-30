@@ -96,10 +96,11 @@ As explained in the introduction of this tutorial, a **profile** is some kind of
 
 Consider for instance, the three profiles defined in the table below:
 
-**profiles**          |    **installed packages**
-**"my soft based on intel compilers" :**  | intel-devel 2015, mysoft-release-intel
-**"my soft based on gnu compilers"** :'      | gcc-wrapper-6.3.0, mysoft-release-gnu
-**"my soft, debug mode, based on gnu compilers' :** 		  |  gcc-wrapper-6.3.0, mysoft-debug-gnu, valgrind
+|**profiles**                                                      |    **installed packages**                      |
+|------------------------------------------------------------------|------------------------------------------------| 
+|**"my soft based on intel compilers" :**                          | intel-devel 2015, mysoft-release-intel         |
+|**"my soft based on gnu compilers"** :'                           | gcc-wrapper-6.3.0, mysoft-release-gnu          |
+|**"my soft, debug mode, based on gnu compilers' :** 		   | gcc-wrapper-6.3.0, mysoft-debug-gnu, valgrind  |
 
 
 In that case, assuming you have defined these profiles, you can switch easily between three different setups of the same software (mysoft), without any interference between them.
@@ -400,9 +401,11 @@ And if the new version of the package  does not work, you can allways do a "--ro
 > * How to create a local package
 > * How to debug a package and how the native builder works
 
+Under a Nix environment, creating a package is often the best way to install an application. You should not be afraid about that, it is very easy and satisfying. How many times have you installed a software, locally on your home, and when it's been done, you can't remember how you did? If you do this directly by creating a Nix package, you can't forget as everything will be described. Your application is built inside an isolated environment, with no dependency with the system. Furthermore, you can pass your package to a colleague, or to the Nix community! 
+
 ## Your first Nix expression: a basic ''hello'' package
 
-A package is  built from a nix "expression". Nix expressions describe the actions to build packages. (Getting the sources, compiling, installing).
+A package is  built from a nix "expression". Nix expressions describe the actions to build packages (getting the sources, patching, compiling, installing...).
   
 Here is a sample expression for a basic packaging of the ''hello'' program:
 
@@ -418,6 +421,7 @@ in
     hello = stdenv.mkDerivation rec {
     name = "hello-${version}";
     buildInputs = [ perl ];
+    hardeningDisable = [ "format" ];
     src = fetchurl {
       url = "ftp://ftp.nluug.nl/pub/gnu/hello/${name}.tar.gz";
       sha256 = "c510e3ad0200517e3a14534e494b37dc0770efd733fc35ce2f445dd49c96a7d5";
@@ -507,6 +511,7 @@ in
     hello = stdenv.mkDerivation rec {
     name = "hello-${version}";
 #    buildInputs = [ perl ];
+    hardeningDisable = [ "format" ];
     src = fetchurl {
       url = "ftp://ftp.nluug.nl/pub/gnu/hello/${name}.tar.gz";
       sha256 = "c510e3ad0200517e3a14534e494b37dc0770efd733fc35ce2f445dd49c96a7d5";
@@ -606,6 +611,7 @@ in
     hello = stdenv.mkDerivation rec {
     name = "hello-${version}";
     buildInputs = [ help2man ];
+    hardeningDisable = [ "format" ];
     src = fetchurl {
       url = "ftp://ftp.nluug.nl/pub/gnu/hello/${name}.tar.gz";
       sha256 = "c510e3ad0200517e3a14534e494b37dc0770efd733fc35ce2f445dd49c96a7d5";
@@ -620,11 +626,18 @@ Then build!
 nix-build  ./hello.nix
 ```
 
+> Summary
+>
+> * a package is made by writting a *nix expression* into a file
+> * *stdenv.mkDerivation* is a powerful function used to create a new package with a lot of possible attributes. See the [Writing Nix Expressions](http://nixos.org/nix/manual/#chap-writing-nix-expressions) part of the Nix documentation for more informations
+> * use ```nix-build``` to build your package
+> * use ```nix-shell``` to enter into the environment of your package, check, debug and build manually
+
 # How to add a package to nixpkgs
 
-So, you created a local package. This is generally the first step of a process that goes further, to the publication of the package into the nixpkgs repository. We will see that more in details.
+> In the previous section, you learned how to create what we call (here at the Gricad team) a *local package*. That's a package that is based on the available nixpkgs distribution of your system Nix installation. We will now see how, with very minor differences, a such package could be integrated into the official nixpkgs repository.
 
-## First step : get a local copy of nixpkgs tree
+## First step : get a local copy of the nixpkgs tree
 
 Checkout the Nixpkgs source tree:
 
@@ -864,7 +877,36 @@ You have now to create a pull request to have it reviewed and merged into the ma
 
 ## Annexe: Tips
 
-By default, unfree package installation are not allowed. We can change this behaviour :
+### More with nix-shell
+
+```nix-shell``` can also be used to enter into the environment of one or several existing packages, without even installing them, for example:
+
+```bash
+nix-shell -p python27 -p python27Packages.numpy
+```
+opens a shell in an isolated environment which contains python2.7 with the numpy module:
+`
+```bash
+[nix-shell:~]$ python -i
+Python 2.7.13 (default, Dec 17 2016, 20:05:07) 
+[GCC 5.4.0] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import numpy
+>>> 
+```
+You can even use nix-shell as the shebang of a script:
+
+```
+#! /usr/bin/env nix-shell
+#! nix-shell -i python27 python27Packages.numpy
+
+import numpy
+...
+```
+
+### Unfree packages
+
+By default, unfree packages installation is not allowed. We can change this behaviour :
 
 For `nixos-rebuild` you can set
 
@@ -907,16 +949,23 @@ permittedInsecurePackages = [
 }
 ```
 
-When compiling the code, some options of the standard environment provided by Nix, are generating some warnings. This behavior
-can be changed, adding this line in your derivation:
+### Warnings treated as errors
+
+When compiling the code, some options of the standard environment provided by Nix makes some warnings to be treated as errors. The best thing to do is to create a patch to remove the warning. But, when you don't have the time to fix, this behavior can be changed, adding this line in your derivation:
 ```
 hardeningDisable = [ "format" ];
 ```
+Then, don't forget to make a patch later...
 
-Adding your name in the maintainers file:
+
+
+### Adding your name in the maintainers file
+
 ```
 ~/nixpkgs$ grep tuto lib/maintainers.nix 
   tuto = "Tuto Nix Jdev2017 <tuto@tuto.net>";
 ```
 
 # Nix for HPC (multiuser mode)
+
+This part is for system administrators, responsible of an HPC cluster. [This article](https://gricad.github.io/calcul/nix/hpc/2017/05/15/nix-on-hpc-platforms.html) describes the operations to set-up Nix on your Linux HPC system.
