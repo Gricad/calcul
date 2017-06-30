@@ -327,7 +327,7 @@ nix-env -i boost-1.60.0
 ```
 
 
-Try also an explicit call to **attributes**:
+Try also an explicit call, with **attributes**:
 
 ```bash
 nix-env -iA nixpkgs.boost160
@@ -392,9 +392,17 @@ nix-env -qs
 
 ## Profile rollback and generations
 
-Each time you do a Nix operation in your profile, it creates a new generation of it. You can switch to every generations of a given profile.
+Each time you perform a Nix operation in your profile, it creates a new **generation** of it. 
+This concept of generation in profiles allows you to rollback to any previous state:
 
-You can undo a **nix-env** command with :
+first check the  entire profile history (called "links generations") :
+```bash
+nix-env --list-generations
+```
+
+and then switch either to the previous step in profile or step to a chosen state:
+
+Back to previous step:
 ```bash
 ~$ nix-env -q
 boost-1.60.0
@@ -406,25 +414,12 @@ switching from generation 3 to 2
 boost-1.60.0
 hello-2.10
 ```
-
 As you can see, the last package we installed is no more here.
 
+Back to a chosen step (assuming 3 is an existing stage in your list-generations)
 
-To view the entire profile history (called "links generations") :
-```bash
-nix-env --list-generations
-```
-
-You can directly return to a specific generation with its id number:
 ```bash
 nix-env --switch-generation 3
-```
-
-## Remove packages
-
-To remove a package from your Nix profile, just type :
-```bash
-nix-env -e the_package_you-re_searching_for
 ```
 
 ## Update packages
@@ -440,7 +435,9 @@ And if the new version of the package  does not work, you can allways do a "--ro
 > * Install packages with ```nix-env -i <package_name>``` or ```nix-env -iA <attribute>```
 > * List installed packages with ```nix-env -q```
 > * Remove packages with ```nix-env -e <package>```
-> * Do a rollback with ```nix-env --rollback``` or jump to a version of your profile with ```nix-env --switch-generation <id>```
+> * Rollback or jump to a specific version of your profile with
+> 
+>      ```nix-env --rollback``` or ```nix-env --switch-generation <id>```
 
 
 # Package development
