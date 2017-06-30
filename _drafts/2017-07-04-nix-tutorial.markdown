@@ -197,7 +197,7 @@ Once again, check your profile and the linked directory:
 ls -altr ~/.nix-profile
 ```
 
-## Search and install a package with nix
+## Search, install, remove a package with nix
 
 Most of nix operations are carried out using ```nix-env``` command.
 
@@ -236,7 +236,46 @@ Indeed, depending on what has been previously done on your system, the ```nix-en
 in /nix/store and finally create the required links in your profile (.nix-profile/ ...) or just create the links, if the package is already 
 in /nix/store (previous install by you or another user).
 
-It means that hello binary is installed "system wide", in /nix/store, although you're not root.
+It means that hello binary is installed "system wide", in /nix/store, although you're not root, which is one of the very interesting features of nix : you do not depend
+on some administrator to install and setup your working environment.
+
+To remove a package, once again call ```nix-env``` with 'erase' option:
+
+```bash
+nix-env -e hello
+uninstalling ‘hello-2.10’
+```
+
+hello has disappear from your path:
+
+```bash
+hello
+-bash: hello: command not found
+```
+
+and from your profile
+
+```bash
+ls -altr ~/.nix-profile/bin
+ls: .nix-profile/bin: No such file or directory
+```
+
+But hello is still present in /nix/store:
+
+```bash
+ls  /nix/store/*hello*
+/nix/store/bh26bk4rcqlxja3chgn6a3jv7yiqshg4-hello-2.10:
+bin   share
+```
+
+And if you reinstall it, no download or install occurs, it only creates symbolic links in your .nix-profile. Try install and check output:
+
+```bash
+~$ nix-env -i hello
+installing ‘hello-2.10’
+...
+```
+
 
 Well, hello package is very interesting but you're likely to search for a specific package, say for instance boost.
 
@@ -270,16 +309,26 @@ nixpkgs.xgboost                                                   xgboost-0.60
 
 
 Ok, now you're able to choose the boost version that fits you. Notice on the right column, the complete name of the package and on the left column, the attributes of the package (channel and components name between dots).
-As explained in the introduction a channel is no more than a "snapshot" of the nixpkgs reference repository.
 
-Also notice that a same package may be available with different attributes (for example here boost-1.62.0 is available with python27 or python36 bindings).
+As explained in the introduction a **channel** is no more than a "snapshot" of the nixpkgs reference repository.
 
-Once you've find the package name you want to install, you can do it with the following option (by name) :
+The **components** attribute is important since it allows you to distinguish different configurations of the same library. Here for example, you can choose between different version of boost (1.55, 1.59 ...)
+or between different configuration of the same version of boost (1.62 with or without python and with python 2 or python 3 bindings).
+
+Notice also that different packages (different by their attributes) may have the same name (e.g. boost-1.62.0).
+
+==> a good pratice : always use install with complete attributes list to avoid confusion and unexpected behavior.
+
+
+Choose one version and try to install it by calling ```nix-env -i``` followed by the **name** of the package. For instance:
+
 ```bash
 nix-env -i boost-1.60.0
 ```
 
-Or (by attributes) :
+
+Try also an explicit call to **attributes**:
+
 ```bash
 nix-env -iA nixpkgs.boost160
 ```
@@ -292,7 +341,7 @@ ls -ld ~/.nix-profile/lib
 
 ```
 
-Let's install another library, to populate a bit more our profile:
+Let us install another library, to populate a bit more our profile:
 
 ```bash
 nix-env -iA nixpkgs.openblas
