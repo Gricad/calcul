@@ -312,8 +312,8 @@ Ok, now you're able to choose the boost version that fits you. Notice on the rig
 
 As explained in the introduction a **channel** is no more than a "snapshot" of the nixpkgs reference repository.
 
-The **components** attribute is important since it allows you to distinguish different configurations of the same library. Here for example, you can choose between different version of boost (1.55, 1.59 ...)
-or between different configuration of the same version of boost (1.62 with or without python and with python 2 or python 3 bindings).
+The **components** attribute is important since it allows you to distinguish different configurations of the same library. Here for example, you can choose between different versions of boost (1.55, 1.59 ...)
+or between different configurations of the same version of boost (1.62 with or without python and with python 2 or python 3 bindings).
 
 Notice also that different packages (different by their attributes) may have the same name (e.g. boost-1.62.0).
 
@@ -354,7 +354,7 @@ ls -ld ~/.nix-profile/lib
   .nix-profile/lib
 ```
 
-The *lib* directory was actualy a link to the same directory into the *boost* package, as we had only one package installed with a *lib* path. But now that we have another package having a *lib* directory too, it is now a real directory, and nix created a bunch of symbolic links inside:
+Since only one package with a lib path was installed, the *lib* directory in your profile was just a link to the same directory in  *boost* package from nix store. But now that we have another package having a *lib* directory too, lib in your profile becomes a real directory, where nix created a bunch of symbolic links to the shared libraries in nix store:
 
 ```bash
 ls -altr ~/.nix-profile/lib/libboost_atomic.*
