@@ -165,19 +165,20 @@ You can now work with differents profiles and switch between them and have as ma
 
 # Nix basics
 
-
-> How to install, remove, update a package
+> In this section, you will learn ...
 >
-> How to list and find packages
+> how to install, remove, update a package,
 >
-> How to check, rollback your profile
+> how to list and find packages,
+>
+> how to check, rollback your profile.
 
 At this point it's important to understand the underlying mechanisms of nix for libraries installation and management.
 Nix is made to allow different users to have different configurations and to switch between them but
 with *one and only one place where everything is installed* : /nix.
 
 One of the main benefits of using nix is that any user (understand non-root) is allowed to "install"
-packages in /nix. This package will be available in the user environment through some trees of symlink
+packages in /nix. These packages will be available in the user environment through some trees of symlink
 between /nix and ~/.nix-profile and ready to be used by any other user.
 
 Moreover, thanks to profiles, a single user can easily switch between different configurations.
@@ -206,7 +207,7 @@ installing ‘hello-2.10’
 ...
 ```
 
-And the binary is now available in your path:
+And the 'hello' binary is now available in your path:
 
 ```bash
 ~$ hello
@@ -236,22 +237,20 @@ in /nix/store (previous install by you or another user).
 
 It means that hello binary is installed "system wide", in /nix/store, although you're not root.
 
+Well, hello package is very interesting but you're likely to search for a specific package, say for instance boost.
 
-
-
-Let us assume that you need some specific application, say for instance **boost**.
-First of all, you need to check if this package is available, if so which is the version number, and so on:
-
-The complete list of all available packages can be obtained thanks to the command
+A complete list of all available packages, in the nix store, is returned by the command 
 ```bash
 nix-env -qaP
 
 ... **very long list**
 ```
+
 Note: *qaP : q as query, a as available and P as preserve-installed*
 
-combined with grep to target a specific program or library:
-```bash
+A smarter usage of this command combined it with a grep to target a specific program or library:
+
+```
 nix-env -qaP | grep boost
 nixpkgs.boost155                                                  boost-1.55.0
 nixpkgs.boost159                                                  boost-1.59.0
@@ -269,7 +268,10 @@ nixpkgs.xgboost                                                   xgboost-0.60
 ```
 
 
-Ok, now you're able to choose the boost version that fits you. Notice on the right column, the complete name of the package and on the left column, the attributes of the package (channel and components name between dots). Also notice that a same package may be available with different attributes (for example here boost-1.62.0 is available with python27 or python36 bindings).
+Ok, now you're able to choose the boost version that fits you. Notice on the right column, the complete name of the package and on the left column, the attributes of the package (channel and components name between dots).
+As explained in the introduction a channel is no more than a "snapshot" of the nixpkgs reference repository.
+
+Also notice that a same package may be available with different attributes (for example here boost-1.62.0 is available with python27 or python36 bindings).
 
 Once you've find the package name you want to install, you can do it with the following option (by name) :
 ```bash
