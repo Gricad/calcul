@@ -918,8 +918,10 @@ Basically, you have now to create a pull request to have it reviewed and merged 
 >
 > In this section, we created another package, this time by including it into a local copy of the nixpkgs distribution. We learned how to import files into the store and getting the corresponding hash with the useful command ```nix-prefetch-url```. Further reading of the Nixpkgs contributors guide is necessary to learn more in details how to submit your changes.
 
-## Annexe: Tips
+## Apendix: Tips
 
+### Contributing
+The [CONTRIBUTING.md file](https://github.com/NixOS/nixpkgs/blob/master/.github/CONTRIBUTING.md) contains guidelines for contributing.
 
 ### More with nix-shell
 
@@ -1001,14 +1003,6 @@ hardeningDisable = [ "format" ];
 ```
 Then, don't forget to make a patch later...
 
-
-
-### Adding your name in the maintainers file
-
-```
-~/nixpkgs$ grep tuto lib/maintainers.nix 
-  tuto = "Tuto Nix Jdev2017 <tuto@tuto.net>";
-```
 
 # Nix for HPC (multiuser mode)
 
