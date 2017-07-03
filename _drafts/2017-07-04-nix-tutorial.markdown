@@ -13,7 +13,9 @@ table of content
 
 # Introduction
 
-Introduction of this tutorial is currently in French, as a  [PDF presentation]({{ site.url }}/tuto_nix/media/NixIntroJDEV2017.pdf).
+Introduction of this tutorial is currently in French, as the following PDF presentation:
+
+[NIX tutorial introduction]({{ site.url }}/tuto_nix/media/NixIntroJDEV2017.pdf).
 
 
 # Using Nix packages manager
@@ -713,7 +715,7 @@ nix-build  ./hello.nix
 
 We've seen earlier that the packages are described into files located in a directory pointed by the current channel. You can directly get the content of the latest version of this directory by cloning the nixpkgs git repository of NixOS: 
 
-```bash
+```
 $ git clone git://github.com/NixOS/nixpkgs.git
 
 Initialized empty Git repository in /home/rochf/nixpkgs/.git/
@@ -735,107 +737,37 @@ $ cd nixpkgs
 
 You can take a look at the existing Nix expressions in the ```pkgs/``` subtree to see how packages are made. A good start-point is the ```pkgs/top-level/all-packages``` which contains the default calls to all the packages.
 
-If your package is a library, you will probably place it under ```pkgs/development/libraries```.
+For example, if your package is a library, you will probably place it under ```pkgs/development/libraries``` while a monitoring service will be placed under ```pkgs/servers/monitoring```. Let's say your package is called "mylib", then you would create a new ``` pkgs/development/libraries/mylib``` directory.
 
-While a monitoring service will be place under :
-pkgs/servers/monitoring
+The nix expression of a package is generally put inside a file called ```default.nix```, so  ```pkgs/development/libraries/mylib/default.nix``` in our example.
 
-For example, if you are developping a package for a "mylib" library, create a new directory for your package:
+Copying the default.nix file of another library and modify it to adapt to your own library, is often a good start.
 
-```bash
-mkdir pkgs/development/libraries/mylib
-```
+Once your expression is created, you have to add at least a line into the `pkgs/top-level/all-packages.nix` file to define the call to your package.
 
-Then create the nix expression of your library package, it is usually called default.nix :
+For your first package, you may also have to add a line to the `lib/maintainers.nix` file to add your name and e-mail address. You may also have to check the list of available licenses into the `lib/licenses.nix` file.
 
-```bash
-$ emacs pkgs/development/libraries/mylib/default.nix
-```
-
-You can copy/paste the default.nix file of another library and modify it to adapt to your own library.
-
-The list of all packages is defined in:
-`~/nixpkgs/pkgs/top-level/all-packages.nix`
-
-If you add a new package, add a line for it.
-You can use as model one of the other packages ''callPackage'' lines.
-Ths line is a call to the function defined in your default.nix  
-(See the "oned" example below).
-
-The list of package maintainers is defined in :
-`~/nixpkgs/lib/maintainers.nix`
-
-A listing of licenses versions is available in :
-`~/nixpkgs/lib/licenses.nix`
-
-The [Nixpkgs Contributors Guide](https://nixos.org/releases/nixpkgs/nixpkgs-17.03pre91272.7e273d9/manual/) can help you.
+The [Nixpkgs Contributors Guide](https://nixos.org/nixpkgs/manual/) is the reference you should read to know more about writing Nix packages.
 
 
-### Example of "oned" package derivation
-Oned is a program which solve the Poisson equation using Jacobi method.
+### Example: the "oned" package derivation
+Oned is a program which solves the Poisson equation using Jacobi method.
 
-The code is available at "https://www.pdc.kth.se/education/tutorials/mpi/hybrid-lab/oned.c"  
+The code is available at [https://www.pdc.kth.se/education/tutorials/mpi/hybrid-lab/oned.c](https://www.pdc.kth.se/education/tutorials/mpi/hybrid-lab/oned.c)
 
-A good place for nix expression of the "oned" package, seems to be : `pkgs/application/science/physics`
+Let's consider the following expression:
 
-```bash
-$ mkdir pkgs/applications/science/physics/oned
-$ emacs pkgs/applications/science/physics/oned/default.nix
-```
-
-you can use "nix-prefetch-url" command (or similar "nix-prefetch-git" command) to get the SHA-256 hash of source distributions.
-
-```bash
-$ nix-prefetch-url https://www.pdc.kth.se/education/tutorials/mpi/hybrid-lab/oned.c
-downloading ‘https://www.pdc.kth.se/education/tutorials/mpi/hybrid-lab/oned.c’... [0/0 KiB, 0.0 KiB/s]
-path is ‘/nix/store/iw1xyii9wqb1ly5w95ni7rlwsv4q2pp5-oned.c’
-1585yzy1gkg3bxfg19mh3ag1x7yik2h3lg5kz705d3jk9dhjg03b
-
-```
-
-*1585yzy1gkg3bxfg19mh3ag1x7yik2h3lg5kz705d3jk9dhjg03b*
-
-Or, in case you have already downloaded the source code, use `sha256sum`" command to specify the sha256 record
-
-Ex:
-
-```bash
-sha256sum oned.c
-```
-
-`buildInputs` defines a set of Nix packages dependencies for package build.
-
-`propagatebuildInputs` defines runtime dependencies.
-
-`buildInputs` and `propagatebuildInputs` are `Meta attributes` ; Meta attributes contain informations about the package. You can choose the necessary ones (the list of available meta-attributes is well [specified](http://nixos.org/nixpkgs/manual/#chap-meta).
-
-Add your maintainer name with your email, respecting the alphabetical order :
-
-```bash
-emacs ~/nixpkgs/lib/maintainers.nix
-```
-
-Declare the package in the list of packages :
-
-```bash
-emacs ~/nixpkgs/pkgs/top-level/all-packages.nix
-```
-
-Add the following line (in the SCIENCE zone, and respecting the alphabetical order) :
-
-`oned = callPackage ../applications/science/physics/oned  { };`
-
-
-A nix expression for "oned":
-```
+```Nix
 { stdenv, fetchurl, openmpi }:
 
 stdenv.mkDerivation rec {
   name = "oned";
   src = fetchurl {
      url = "https://www.pdc.kth.se/education/tutorials/mpi/hybrid-lab/oned.c";
-     sha256 = "1585yzy1gkg3bxfg19mh3ag1x7yik2h3lg5kz705d3jk9dhjg03b";
+     sha256 = "<HASH_HERE>";
   };
+
+  buildInputs = [ openmpi ];
 
   builder = builtins.toFile "builder.sh"
   "
@@ -846,8 +778,6 @@ stdenv.mkDerivation rec {
   cp oned.exe $out/bin
   ";
 
-  buildInputs = [ openmpi ];
-
   meta = {
     description = "JDEV 2017 Nix tutoriel";
     license     = stdenv.lib.licenses.gpl2;
@@ -855,17 +785,53 @@ stdenv.mkDerivation rec {
   };
 }
 ```
-In this case, you need to provide your own build script into a "builder" block, because configure and Makefile are not provided. 
-The builder starts with "source $stdenv/setup" to setup the environment and process the buidInputs.
+
+A good place for this expression, seems to be : `pkgs/application/science/physics`
+
+```bash
+$ mkdir pkgs/applications/science/physics/oned
+$ emacs pkgs/applications/science/physics/oned/default.nix
+```
+First of all, you'll need to compute the SHA-256 hash of your source file, to be sure that your package will always be built from this unique source file. The package built process will put this source file into the NIX store, before actualy building the package. So, to avoid downloading twice, let's use the convenient ```nix-prefetch-url``` command that does the download operation and the hash calculation, both at the same time:
+
+```bash
+$ nix-prefetch-url https://www.pdc.kth.se/education/tutorials/mpi/hybrid-lab/oned.c
+downloading ‘https://www.pdc.kth.se/education/tutorials/mpi/hybrid-lab/oned.c’... [0/0 KiB, 0.0 KiB/s]
+path is ‘/nix/store/iw1xyii9wqb1ly5w95ni7rlwsv4q2pp5-oned.c’
+1585yzy1gkg3bxfg19mh3ag1x7yik2h3lg5kz705d3jk9dhjg03b
+
+```
+
+Or, in case you have already downloaded the source code, use the `sha256sum` command:
+
+```bash
+sha256sum oned.c
+```
+Place this hash into the expression, in place of *```<HASH_HERE>```*.
+
+Regarding the expression, an important attribute is `buildInputs` that defines a set of Nix packages dependencies for package build. You may also use `propagatebuildInputs` for the dependencies that also need to be present at runtime.
+
+In this example, we have provided our own build script into a "builder" block, because configure and Makefile are not provided. The builder starts with "source $stdenv/setup" to setup the environment and process the buidInputs.
 The $out variable is the location of the package under Nix store.
+
+Generally, the last part of the expression contains a list of meta attributes.
+Meta attributes contain informations about the package, such a description, the reference of the maintainer,.... Check the [documentation of meta attributes](http://nixos.org/nixpkgs/manual/#chap-meta) for more information.
+
+Once your expression is written, you have to declare the package in the list of packages :
+
+```bash
+emacs ~/nixpkgs/pkgs/top-level/all-packages.nix
+```
+
+Add the following line (in the SCIENCE zone, with respect of the alphabetical order) :
+
+`oned = callPackage ../applications/science/physics/oned  { };`
 
 ### Another derivation for oned :
 
-Here, the sources provide a standard building process (configure, make, make install).
-you don't have to write any builder in your nix expression, a generic builder, included in the standard environment (stdenv) do it for you:
+Here is another example for the same programm, but this time with sources including a standard building process (configure, make, make install). So, this time, we do not provide any custom builder, but use the generic one of stdenv.
 
-
-```bash
+```Nix
 cat  ~/nixpkgs/pkgs/applications/science/physics/oned/default.nix
 
 { stdenv, fetchgit, openmpi }:
@@ -891,7 +857,7 @@ stdenv.mkDerivation {
 }
 ```
 
-## Third step: Building and installing the Package
+## Building and installing the Package
 
 
 The build process is started with the nix-build command:
