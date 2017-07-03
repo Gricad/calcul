@@ -912,6 +912,9 @@ $ mpirun -np 2 oned.exe 200
 Read the [Submitting changes part of the Nixpkgs Contributors Guide](https://nixos.org/nixpkgs/manual/#chap-submitting-changes).
 Basically, you have now to create a pull request to have it reviewed and merged into the master branch of the nixpkgs repository. Of course, the previous work has to be made into a local branch of your nixpkgs clone.
 
+>    Summary
+>
+> In this section, we created another package, this time by including it into a local copy of the nixpkgs distribution. We learned how to import files into the store and getting the corresponding hash with the useful command ```nix-prefetch-url```. Further reading of the Nixpkgs contributors guide is necessary to learn more in details how to submit your changes.
 
 ## Annexe: Tips
 
@@ -949,7 +952,7 @@ By default, unfree packages installation is not allowed. We can change this beha
 
 For `nixos-rebuild` you can set
 
-```
+```Nix
 { nixpkgs.config.allowUnfree = true; }
 ```
 
@@ -958,22 +961,22 @@ in configuration.nix to override this.
 
 For `nix-env`, `nix-build`, `nix-shell` or any other Nix command you can add
 
-```
+```Nix
 { allowUnfree = true; }
 ```
 
 to your ~/.config/nixpkgs/config.nix.
 
 
-```
+```bash
 $ mkdir .config/nixpkgs
 
 $ emacs .config/nixpkgs/config.nix
 ```
 
-Here an example:
+Here's an example:
 
-```
+```bash
 $ cat .config/nixpkgs/config.nix
 
 {
@@ -1007,4 +1010,7 @@ Then, don't forget to make a patch later...
 
 # Nix for HPC (multiuser mode)
 
-This part is for system administrators, responsible of an HPC cluster. [This article](https://gricad.github.io/calcul/nix/hpc/2017/05/15/nix-on-hpc-platforms.html) describes the operations to set-up Nix on your Linux HPC system.
+> This part is for system administrators, responsible of an HPC cluster. 
+>
+> If you're interested, please, check this article that describes the operations to set-up Nix on your Linux HPC system:
+> * [NIX on HPC platforms](https://gricad.github.io/calcul/nix/hpc/2017/05/15/nix-on-hpc-platforms.html)
