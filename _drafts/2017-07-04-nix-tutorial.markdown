@@ -384,33 +384,6 @@ otool -L ~/.nix-profile/lib/libboost_atomic.dylib
 * this environment (.nix-profile) contains only symbolic links
 * everything has been installed in /nix
 
-## About the NIX_PATH
-To understand the *channel* concept, it might be useful to understand how the NIX_PATH environment variable is used. Take a look at it:
-```bash
-echo $NIX_PATH
-  nixpkgs=/home/<your_login>/.nix-defexpr/channels/nixpkgs
-```
-In your default environment, it contains only one *channel* definition, the *nixpkgs* one. It gives a PATH that is actualy a link to the store:
-
-```bash
-readlink ~/.nix-defexpr/channels/nixpkgs
-  /nix/store/civk55fs0p07kjnvgjqfdvgws2qvxyq2-nixpkgs-17.09pre109811.ce88027294/nixpkgs
-```
-
-And this is where the channel currently used lives (remember: *nix-env -iA **nixpkgs**.boost160*). In this directory, you can find all the files (called *expressions*, we'll see that later) with the code of the packages of the *Nixpkgs* distribution, and the code of the builtin tools (builders, patching tools, ...). 
-For example, let's search for the code of the hello package:
-
-```bash
-find ~/.nix-defexpr/channels/nixpkgs/ -name hello
-```
-A file is particularily interesting to look at: ```all-packages.nix```. It's the file where the default attributes of the packages are defined (what you put just after *nix-env -iA*). For example:
-
-```bash
-grep hello ~/.nix-defexpr/channels/nixpkgs/pkgs/top-level/all-packages.nix
-```
-
-This is not necessary to go further at this point, but remember that any time you wonder what is made inside a package, or how packages are called, you can take a look at this directory. 
-By the way, notice that the name of the directory can be used to check the version of the nixpkgs channel you are using. In our example it is *17.09pre109811* (*/nix/store/civk55fs0p07kjnvgjqfdvgws2qvxyq2-nixpkgs-**17.09pre109811**.ce88027294/nixpkgs*)
 
 ## List installed packages
 To list installed packages in your current profile type :
@@ -457,6 +430,35 @@ The following command will update the named package and all its dependencies :
 nix-env -uA the_package_you-re_searching_for
 ```
 And if the new version of the package  does not work, you can allways do a "--rollback"!
+
+## Channel and NIX_PATH
+To understand the *channel* concept, it might be useful to understand how the NIX_PATH environment variable is used. Take a look at it:
+```bash
+echo $NIX_PATH
+  nixpkgs=/home/<your_login>/.nix-defexpr/channels/nixpkgs
+```
+In your default environment, it contains only one *channel* definition, the *nixpkgs* one. It gives a PATH that is actualy a link to the store:
+
+```bash
+readlink ~/.nix-defexpr/channels/nixpkgs
+  /nix/store/civk55fs0p07kjnvgjqfdvgws2qvxyq2-nixpkgs-17.09pre109811.ce88027294/nixpkgs
+```
+
+And this is where the channel currently used lives (remember: *nix-env -iA **nixpkgs**.boost160*). In this directory, you can find all the files (called *expressions*, we'll see that later) with the code of the packages of the *Nixpkgs* distribution, and the code of the builtin tools (builders, patching tools, ...). 
+For example, let's search for the code of the hello package:
+
+```bash
+find ~/.nix-defexpr/channels/nixpkgs/ -name hello
+```
+A file is particularily interesting to look at: ```all-packages.nix```. It's the file where the default attributes of the packages are defined (what you put just after *nix-env -iA*). For example:
+
+```bash
+grep hello ~/.nix-defexpr/channels/nixpkgs/pkgs/top-level/all-packages.nix
+```
+
+This is not necessary to go further at this point, but remember that any time you wonder what is made inside a package, or how packages are called, you can take a look at this directory. 
+
+By the way, notice that the name of the directory can be used to check the version of the nixpkgs channel you are using. In our example it is *17.09pre109811* (*/nix/store/civk55fs0p07kjnvgjqfdvgws2qvxyq2-nixpkgs-**17.09pre109811**.ce88027294/nixpkgs*)
 
 > Summary
 > * Search for packages with ```nix-env -qaP |grep ...```
