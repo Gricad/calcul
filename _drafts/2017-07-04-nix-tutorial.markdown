@@ -709,9 +709,9 @@ nix-build  ./hello.nix
 
 > In the previous section, you learned how to create what we call (here at the Gricad team) a *local package*. That's a package that is based on the available nixpkgs distribution of your system Nix installation. We will now see how, with very minor differences, a such package could be integrated into the official nixpkgs repository.
 
-## First step : get a local copy of the nixpkgs tree
+## Get a local copy of the nixpkgs tree
 
-Checkout the Nixpkgs source tree:
+We've seen earlier that the packages are described into files located in a directory pointed by the current channel. You can directly get the content of the latest version of this directory by cloning the nixpkgs git repository of NixOS: 
 
 ```bash
 $ git clone git://github.com/NixOS/nixpkgs.git
@@ -719,19 +719,23 @@ $ git clone git://github.com/NixOS/nixpkgs.git
 Initialized empty Git repository in /home/rochf/nixpkgs/.git/
 ```
 
+If this takes too long, you can directly copy your current channel:
+```bash
+# Alternative solution for this tutorial, preventing git overload...
+cp -a ~/.nix-defexpr/channels/nixpkgs/ .
+```
 
-Then, go to nixpkgs directory :
+Then, go to the nixpkgs directory :
 
 ```bash
 $ cd nixpkgs
 ```
 
-## Second step : find a good place for your package and write a nix expression for your package under it
+## Find a good place for your package and write a nix expression
 
-You can have a look at the existing Nix expressions in the pkgs/ tree to see how it's done.
+You can take a look at the existing Nix expressions in the ```pkgs/``` subtree to see how packages are made. A good start-point is the ```pkgs/top-level/all-packages``` which contains the default calls to all the packages.
 
-If your package is a library, you will place it under :
-pkgs/development/libraries
+If your package is a library, you will probably place it under ```pkgs/development/libraries```.
 
 While a monitoring service will be place under :
 pkgs/servers/monitoring
