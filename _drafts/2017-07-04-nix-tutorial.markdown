@@ -31,7 +31,8 @@ Introduction of this tutorial is currently in French, as a  [PDF presentation]({
 
 If this prerequisites are not fullfilled or if you don't want to install nix on your system, you may
 try to run this tutorial inside a docker container. Try the following link, wich provides a Dockerfile and some directives :
-[Docker image for this tutorial]({{site.url }}/tuto_nix/docker/debian_nix_tuto).
+
+- *[Optional docker image for this tutorial]({{site.url }}/tuto_nix/docker/debian_nix_tuto).* 
 
 ## Install Nix (single user mode)
 **Source** : <http://nixos.org/nix/manual/#chap-installation>
@@ -167,12 +168,9 @@ You can now work with differents profiles and switch between them and have as ma
 # Nix basics
 
 > In this section, you will learn ...
->
-> how to install, remove, update a package,
->
-> how to list and find packages,
->
-> how to check, rollback your profile.
+> - how to install, remove, update a package,
+> - how to list and find packages,
+> - how to check, rollback your profile.
 
 At this point it's important to understand the underlying mechanisms of nix for libraries installation and management.
 Nix is made to allow different users to have different configurations and to switch between them but
