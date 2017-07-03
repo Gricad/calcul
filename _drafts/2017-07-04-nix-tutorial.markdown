@@ -733,6 +733,11 @@ Then, go to the nixpkgs directory :
 $ cd nixpkgs
 ```
 
+If you have cloned the Nixos/nixpkgs repository, you should go into a stable branch:
+```bash
+$ git checkout release-17.03
+```
+
 ## Find a good place for your package and write a nix expression
 
 You can take a look at the existing Nix expressions in the ```pkgs/``` subtree to see how packages are made. A good start-point is the ```pkgs/top-level/all-packages``` which contains the default calls to all the packages.
@@ -886,12 +891,6 @@ The oned program is not available. Your environment path is not yet ready, you h
 $ nix-env -f . -iA oned
 ```
 
-*installing ‘oned’*
-<em>building path(s) ‘/nix/store/66rh542l3hnwscgvd39n784qamympv8p-user-environment’</em>
-
-<em>created 67 symlinks in user environment</em>
-
-
 Now we can test the oned program:
 
 ```
@@ -909,11 +908,12 @@ $ mpirun -np 2 oned.exe 200
 
 ## Adding your package in the nixpkgs main repository
 
-Read the Nixpkgs Contributors Guide to follow the guidelines.
-You have now to create a pull request to have it reviewed and merged into the master branch of the nixpkgs repository.
+Read the [Submitting changes part of the Nixpkgs Contributors Guide](https://nixos.org/nixpkgs/manual/#chap-submitting-changes).
+Basically, you have now to create a pull request to have it reviewed and merged into the master branch of the nixpkgs repository. Of course, the previous work has to be made into a local branch of your nixpkgs clone.
 
 
 ## Annexe: Tips
+
 
 ### More with nix-shell
 
