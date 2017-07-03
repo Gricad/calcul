@@ -1010,3 +1010,21 @@ Then, don't forget to make a patch later...
 >
 > If you're interested, please, check this article that describes the operations to set-up Nix on your Linux HPC system:
 > * [NIX on HPC platforms](https://gricad.github.io/calcul/nix/hpc/2017/05/15/nix-on-hpc-platforms.html)
+
+# Authors
+This tutorial is the result of a long labour by:
+* Frederic Audra
+* Philippe Beys
+* Bruno Bzeznik
+* Franck Perignon
+* Francoise Roch
+* Laure Tavard
+
+Many thanks also to our testers:
+* Pierre-Antoine Bouttier
+* Romain Cavagna
+* Glenn Cougoulat
+* Oliver Henriot
+* Albanne Lecointre
+
+If you want to contact us: [gricad-contact at univ-grenoble-alpes.fr](mailto:gricad-contact@univ-grenoble-alpes.fr)
