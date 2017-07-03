@@ -835,7 +835,7 @@ Add the following line (in the SCIENCE zone, with respect of the alphabetical or
 
 `oned = callPackage ../applications/science/physics/oned  { };`
 
-### Another derivation for oned :
+### Another derivation for oned
 
 Here is another example for the same programm, but this time with sources including a standard building process (configure, make, make install) provided as a github repository, using the useful ```fetchgit``` function. So, this time, we do not provide any custom builder, but use the generic one of stdenv.
 
