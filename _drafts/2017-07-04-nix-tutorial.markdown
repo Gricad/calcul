@@ -199,7 +199,7 @@ ls -altr ~/.nix-profile
 
 Most of nix operations are carried out using ```nix-env``` command.
 
-To install a package, use ```nix-env -i somename```. For instance:
+To install a package, use ```nix-env -i <somename>```. For instance:
 ```bash
 ~$ nix-env -i hello
 installing ‘hello-2.10’
@@ -407,7 +407,7 @@ boost-1.60.0
 hello-2.10
 openblas-0.2.19
 ~$ nix-env --rollback
-switching from generation 3 to 2
+switching from generation 5 to 4
 ~$ nix-env -q
 boost-1.60.0
 hello-2.10
