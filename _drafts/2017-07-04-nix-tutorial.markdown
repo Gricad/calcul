@@ -725,6 +725,7 @@ If this takes too long, you can directly copy your current channel:
 ```bash
 # Alternative solution for this tutorial, preventing git overload...
 cp -a ~/.nix-defexpr/channels/nixpkgs/ .
+find . -type d -exec chmod 755 {} \; 
 ```
 
 Then, go to the nixpkgs directory :
