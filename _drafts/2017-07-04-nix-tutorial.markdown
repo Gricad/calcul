@@ -811,11 +811,11 @@ Place this hash into the expression, in place of *```<HASH_HERE>```*.
 
 Regarding the expression, an important attribute is `buildInputs` that defines a set of Nix packages dependencies for package build. You may also use `propagatebuildInputs` for the dependencies that also need to be present at runtime.
 
-In this example, we have provided our own build script into a "builder" block, because configure and Makefile are not provided. The builder starts with "source $stdenv/setup" to setup the environment and process the buidInputs.
-The $out variable is the location of the package under Nix store.
+In this example, we have provided our own build script into a "builder" block, because configure and Makefile are not provided. The builder starts with ```source $stdenv/setup``` to setup the environment and process the buidInputs.
+This also set up the ```$out``` variable that gives the location of the package under the Nix store.
 
 Generally, the last part of the expression contains a list of meta attributes.
-Meta attributes contain informations about the package, such a description, the reference of the maintainer,.... Check the [documentation of meta attributes](http://nixos.org/nixpkgs/manual/#chap-meta) for more information.
+Meta attributes contain informations about the package, such a description, license, the reference of the maintainer,.... Check the [documentation of meta attributes](http://nixos.org/nixpkgs/manual/#chap-meta) for more information.
 
 Once your expression is written, you have to declare the package in the list of packages :
 
@@ -829,11 +829,9 @@ Add the following line (in the SCIENCE zone, with respect of the alphabetical or
 
 ### Another derivation for oned :
 
-Here is another example for the same programm, but this time with sources including a standard building process (configure, make, make install). So, this time, we do not provide any custom builder, but use the generic one of stdenv.
+Here is another example for the same programm, but this time with sources including a standard building process (configure, make, make install) provided as a github repository, using the useful ```fetchgit``` function. So, this time, we do not provide any custom builder, but use the generic one of stdenv.
 
 ```Nix
-cat  ~/nixpkgs/pkgs/applications/science/physics/oned/default.nix
-
 { stdenv, fetchgit, openmpi }:
 
 stdenv.mkDerivation {
@@ -847,7 +845,6 @@ stdenv.mkDerivation {
   };
 
   buildInputs = [ openmpi ];
-
 
   meta = {
     description = "JDEV Nix tutoriel";
@@ -865,32 +862,31 @@ The build process is started with the nix-build command:
 $ nix-build -A oned
 ```
 
-The nix-build command uses the attribute path ''oned'' to find the derivation and build the package.
-The "-A attrPath" nix-env option select an attribute from the top-level Nix expression being evaluated.
+This ```nix-build -A``` command uses the attribute path ```oned``` (that you defined into the ```all-packages.nix``` file), to find the derivation and build the package with some eventual options.
+
+As seen earlier with the hello package, the built package is located in the store, in the subdirectory pointed by the ```./result``` link. 
 
 You can check that all the dynamically loaded libraries are inside the /nix/store directory:
 
 ```
-$ ldd /nix/store/<hash-code>-oned/bin/oned.exe
+$ ldd ./result/bin/oned.exe
 ```
 
 Test the executable :
 
 ```
 $ oned.exe
+bash: oned.exe : command not found
 ```
 
-*bash: oned.exe : command not found*
-
 The oned program is not available. Your environment path is not yet ready, you have to "install" the package.
-
-*installing ‘oned’*
 
 
 ```
 $ nix-env -f . -iA oned
 ```
 
+*installing ‘oned’*
 <em>building path(s) ‘/nix/store/66rh542l3hnwscgvd39n784qamympv8p-user-environment’</em>
 
 <em>created 67 symlinks in user environment</em>
