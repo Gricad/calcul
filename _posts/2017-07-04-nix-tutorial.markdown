@@ -15,7 +15,7 @@ table of content
 
 Introduction of this tutorial is currently in French, as the following PDF presentation:
 
-[NIX tutorial introduction]({{ site.url }}/tuto_nix/media/NixIntroJDEV2017.pdf).
+[NIX tutorial introduction](https://github.com/Gricad/calcul/raw/master/tuto_nix/media/NixIntroJDEV2017.pdf).
 
 
 # Using Nix packages manager
