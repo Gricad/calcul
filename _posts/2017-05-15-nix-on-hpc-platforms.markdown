@@ -8,6 +8,10 @@ categories: nix hpc
 
 ## Introduction
 
+> Note
+> If you're searching for a tutorial about Nix usage, you can go on our [NIX TUTORIAL page](https://gricad.github.io/calcul/nix/tuto/2017/07/04/nix-tutorial.html). The current page is for system administrators that want to set up a multi-user Nix environment on a Linux HPC platform.
+
+
 *At GRICAD, we provide [NIX][nix] as a reproducible and portable computing environment for the users of our High Performance Computing facilities. This post is about how we've set up our computing clusters for supporting NIX and some custom packages not yet pushed or not to be pushed into the upstream Nixpkgs repository. We succeeded this set-up on 2 different platforms: a BullX one (which is actually CentOS based) and a Debian based one.*
 
 What we call an HPC cluster here, is simply a set of interconnected Linux **computing nodes** and one or several **head nodes**. The computing nodes and the head nodes share some common network filesystems, generally NFS or a more performant solution (Lustre, BeeGFS, ...). Users log on the head nodes and submit jobs on the computing nodes by using a special piece of software generally called a *batch scheduler*. So users have no direct access to the nodes, but may do some interactive tasks for preparing the jobs on the head nodes. 
