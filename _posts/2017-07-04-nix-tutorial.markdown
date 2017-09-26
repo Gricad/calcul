@@ -34,7 +34,7 @@ Introduction of this tutorial is currently in French, as the following PDF prese
 If this prerequisites are not fullfilled or if you don't want to install nix on your system, you may
 try to run this tutorial inside a docker container. Try the following link, wich provides a Dockerfile and some directives :
 
-- *[Optional docker image for this tutorial](https://github.com/Gricad/calcul/tree/master/tuto_nix/docker/debian_nix_tuto).* 
+- *[Optional docker image for this tutorial](https://github.com/Gricad/calcul/tree/master/tuto_nix/docker/debian_nix_tuto)* 
 
 ## Install Nix (single user mode)
 **Source** : <http://nixos.org/nix/manual/#chap-installation>
