@@ -5,6 +5,8 @@ author: bzizou
 categories: nix hpc
 ---
 
+Updated: 2018-04-06
+
 
 ## Introduction
 
@@ -123,14 +125,17 @@ The daemon must be started as root, after loading the Nix environment multiuser 
 Of course, you'll have to place this into a startup-script in a convenient place for your distribution.
 
 
-## Testing
-As root, first, update the channel:
+## The Channel
+As root, first, add and update a channel:
 {% highlight bash %}
   root@head1:~# source /applis/site/nix.sh
+  root@head1:~# nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs
   root@head1:~# nix-channel --update
   # You can test (but as root, the nix daemon is not used):
   root@head1:~# nix-env -i hello
 {% endhighlight %}
+
+## Testing
 
 
 Now, you should be able to use Nix as a simple user from the head node running the daemon. Let's do some basic operations:
